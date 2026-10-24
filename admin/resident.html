@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resident Details · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <a class="back-link" href="residents.html">← Back to residents</a>
+    <div id="root" hidden>
+      <p class="eyebrow">Resident details</p>
+      <h1 id="name"></h1>
+      <div class="grid grid-2" style="margin-top:2rem;align-items:start">
+        <section class="card" aria-labelledby="acct-h">
+          <h2 id="acct-h">Account</h2>
+          <dl class="kv" style="grid-template-columns:150px 1fr" id="acct"></dl>
+          <p class="hint" style="margin-top:1rem">Passwords and other sign-in data are never shown on this page.</p>
+        </section>
+        <section class="card" aria-labelledby="rep-h">
+          <h2 id="rep-h">Associated reports</h2>
+          <div id="reports"></div>
+        </section>
+      </div>
+    </div>
+    <div id="not-found" class="card" hidden>
+      <div class="empty"><strong>Resident not found</strong>The account may have been removed, or the link is incorrect.</div>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (function () {
+      const admin = UI.init({ page: 'residents', perm: 'manage_residents' });
+      if (!admin) return;
+      const r = RP.getResident(UI.params().get('id'));
+      if (!r) { document.getElementById('not-found').hidden = false; return; }
+      document.getElementById('root').hidden = false;
+      document.title = r.name + ' · ReportPoint Admin';
+      document.getElementById('name').textContent = r.name;
+      document.getElementById('acct').innerHTML = `
+        <dt>Resident ID</dt><dd class="mono">${UI.esc(r.residentId)}</dd>
+        <dt>Full name</dt><dd>${UI.esc(r.name)}</dd>
+        <dt>Unit</dt><dd>${UI.esc(r.unit)}</dd>
+        <dt>Account status</dt><dd>${UI.accountPill(r.active)}</dd>
+        <dt>Account created</dt><dd>${UI.fmtDate(r.createdAt)}</dd>`;
+      document.getElementById('reports').innerHTML = r.reports.length
+        ? `<ul style="list-style:none;margin:0;padding:0;display:grid;gap:.9rem">` + r.reports.map((x) => `
+            <li style="border-bottom:1px solid var(--line-soft);padding-bottom:.9rem">
+              <div class="row between"><a class="title-link" style="color:var(--text);font-weight:600;text-decoration:none" href="report.html?id=${encodeURIComponent(x.id)}">${UI.esc(x.title)}</a>${UI.statusPill(x.status)}</div>
+              <div class="small muted mono">${UI.esc(x.id)} · ${UI.fmtDate(x.submittedAt)} · ${UI.esc(x.priority)} priority</div></li>`).join('') + '</ul>'
+        : UI.emptyState('No reports yet', 'This resident has not submitted any reports.');
+    })();
+  </script>
+</body>
+</html>

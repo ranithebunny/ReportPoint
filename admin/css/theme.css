@@ -1,0 +1,57 @@
+/* ==========================================================
+   ReportPoint — shared design tokens
+   Taken from Vinnie's Resident Interface screenshots.
+   If the resident colors change, edit ONLY this file.
+   (Copy it to resident/css/ too so both sides stay in sync.)
+   ========================================================== */
+:root {
+  /* Backgrounds */
+  --bg-header: #44574b;
+  --bg-top: #415348;      /* top of page gradient */
+  --bg-bottom: #2a3930;   /* bottom of page gradient */
+  --bg-card: #3b4b41;
+  --bg-card-2: #34443a;   /* nested / inset surfaces */
+  --bg-input: #34443a;
+  --bg-footer: #44574b;
+
+  /* Lines */
+  --line: #bfe3cb;        /* mint card outline */
+  --line-soft: rgba(191, 227, 203, .28);
+
+  /* Text */
+  --text: #f1f5f2;
+  --text-muted: #b5c5ba;
+  --text-faint: #8fa396;
+
+  /* Brand greens */
+  --green: #5f9a73;
+  --green-strong: #6aab80;
+  --mint: #9fd4b0;
+
+  /* Semantic */
+  --danger: #e08a7e;
+  --danger-bg: #6b3a35;
+  --warn: #e6bd6a;
+  --warn-bg: #5d4b24;
+  --info: #8fc1e3;
+
+  /* Status pill colors (Received … Closed match the resident side) */
+  --st-received-bg: transparent;     --st-received-fg: #bfe3cb;  --st-received-bd: #bfe3cb;
+  --st-review-bg: #3d6a8a;           --st-review-fg: #d6ebf9;    --st-review-bd: #6ea6cc;
+  --st-progress-bg: #6b3f87;         --st-progress-fg: #e4c9f5;  --st-progress-bd: #9a67bb;
+  --st-awaiting-bg: #6a5320;         --st-awaiting-fg: #ffe3a3;  --st-awaiting-bd: #e6bd6a;
+  --st-resolved-bg: #3f7a55;         --st-resolved-fg: #d7f5e1;  --st-resolved-bd: #6aab80;
+  --st-closed-bg: #4d5953;           --st-closed-fg: #d5ddd8;    --st-closed-bd: #8fa396;
+  --st-rejected-bg: #78403a;         --st-rejected-fg: #ffd5cf;  --st-rejected-bd: #e08a7e;
+
+  /* Type */
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Shape */
+  --radius: 18px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+  --shadow: 0 6px 18px rgba(0, 0, 0, .22);
+  --content-width: 1180px;
+}

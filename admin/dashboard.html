@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Overview</p>
+        <h1>Good day, <span id="who"></span></h1>
+        <p>Here is where every submitted report stands right now.</p>
+      </div>
+      <a class="btn btn-primary" href="reports.html">View all reports</a>
+    </div>
+
+    <section aria-labelledby="stats-h" class="stack">
+      <h2 class="sr-only" id="stats-h">Report counts by status</h2>
+      <div class="grid grid-stats" id="stats"></div>
+    </section>
+
+    <div class="grid grid-2" style="margin-top:1.5rem">
+      <section class="card" aria-labelledby="attn-h">
+        <h2 id="attn-h">Needs attention</h2>
+        <p class="muted small">Unreviewed reports and open High-priority reports, oldest first.</p>
+        <div id="attention"></div>
+      </section>
+      <section class="card" aria-labelledby="cat-h">
+        <h2 id="cat-h">Reports by category</h2>
+        <div id="categories"></div>
+        <hr class="divider">
+        <h3 style="margin-bottom:.75rem">Open by priority</h3>
+        <div id="priorities"></div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:1.5rem" aria-labelledby="recent-h">
+      <h2 id="recent-h">Recent activity</h2>
+      <div id="recent"></div>
+    </section>
+  </main>
+  <div id="app-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/page-dashboard.js"></script>
+</body>
+</html>

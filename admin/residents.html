@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Residents · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Resident accounts</p>
+        <h1>Manage residents</h1>
+        <p>Only administrators can create resident accounts. Residents can change their own password after first login.</p>
+      </div>
+      <button class="btn btn-primary" id="add-btn" type="button">+ Create resident account</button>
+    </div>
+
+    <form class="filters" role="search" aria-label="Filter residents" onsubmit="return false" style="grid-template-columns:2fr 1fr auto">
+      <div class="field"><label for="f-q">Search by name or Resident ID</label><input type="search" id="f-q" placeholder="e.g. Juan or CP-1208"></div>
+      <div class="field"><label for="f-status">Account status</label>
+        <select id="f-status"><option value="">All accounts</option><option value="active">Active</option><option value="deactivated">Deactivated</option></select></div>
+      <div class="field"><button class="btn btn-sm" type="button" id="f-clear">Clear</button></div>
+    </form>
+
+    <p class="result-count" id="count" aria-live="polite"></p>
+    <div class="table-wrap" id="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Full name</th><th scope="col">Unit</th><th scope="col">Resident ID (username)</th><th scope="col">Default password</th><th scope="col">Status</th><th scope="col">Date created</th><th scope="col">Actions</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="empty" hidden></div>
+  </main>
+  <div id="app-footer"></div>
+
+  <!-- Create / edit -->
+  <dialog id="dlg-resident" aria-labelledby="dlg-resident-h">
+    <form id="resident-form" novalidate>
+      <div class="dlg-head"><h2 id="dlg-resident-h">Create resident account</h2>
+        <p id="dlg-resident-p">A Resident ID and a default password are generated automatically. Give them to the resident in person.</p></div>
+      <div class="dlg-body">
+        <div class="field"><label for="rf-name">Full name <span class="req" aria-hidden="true">*</span></label><input type="text" id="rf-name" autocomplete="off"><div class="error-text" id="rf-name-error"></div></div>
+        <div class="field"><label for="rf-unit">Unit number <span class="req" aria-hidden="true">*</span></label><input type="text" id="rf-unit" placeholder="e.g. 1208" autocomplete="off"><div class="error-text" id="rf-unit-error"></div></div>
+        <div class="field"><label for="rf-email">Email <span class="opt">(optional)</span></label><input type="email" id="rf-email" autocomplete="off"><div class="error-text" id="rf-email-error"></div></div>
+        <div class="field"><label for="rf-phone">Contact number <span class="opt">(optional)</span></label><input type="text" id="rf-phone" autocomplete="off"></div>
+      </div>
+      <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="rf-submit">Create account</button></div>
+    </form>
+  </dialog>
+
+  <!-- Credentials shown once after creation / reset -->
+  <dialog id="dlg-creds" aria-labelledby="dlg-creds-h">
+    <div class="dlg-head"><h2 id="dlg-creds-h">Account ready</h2><p>Hand these to the resident. They should change the password after logging in.</p></div>
+    <div class="dlg-body"><dl class="kv" style="grid-template-columns:130px 1fr">
+      <dt>Name</dt><dd id="cr-name"></dd><dt>Resident ID</dt><dd><span class="secret" id="cr-id"></span></dd><dt>Default password</dt><dd><span class="secret" id="cr-pw"></span></dd></dl></div>
+    <div class="dlg-foot"><button class="btn btn-primary" data-close type="button">Done</button></div>
+  </dialog>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/page-residents.js"></script>
+</body>
+</html>

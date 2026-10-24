@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administrators · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Administrator accounts</p>
+        <h1>Admins &amp; access</h1>
+        <p>Create administrators and choose exactly what each one is allowed to do.</p>
+      </div>
+      <button class="btn btn-primary" id="add-btn" type="button">+ Add administrator</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Name</th><th scope="col">Username</th><th scope="col">Access</th><th scope="col">Status</th><th scope="col">Created</th><th scope="col">Actions</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+
+  <dialog id="dlg-admin" aria-labelledby="dlg-admin-h">
+    <form id="admin-form" novalidate>
+      <div class="dlg-head"><h2 id="dlg-admin-h">Add administrator</h2>
+        <p id="dlg-admin-p">Give them a temporary password and tell them in person. Choose only the access they need.</p></div>
+      <div class="dlg-body">
+        <div class="field"><label for="af-name">Full name <span class="req" aria-hidden="true">*</span></label><input type="text" id="af-name" autocomplete="off"><div class="error-text" id="af-name-error"></div></div>
+        <div class="field"><label for="af-username">Username <span class="req" aria-hidden="true">*</span></label><input type="text" id="af-username" autocomplete="off"><div class="error-text" id="af-username-error"></div></div>
+        <div class="field"><label for="af-email">Email <span class="req" aria-hidden="true">*</span></label><input type="email" id="af-email" autocomplete="off"><div class="error-text" id="af-email-error"></div></div>
+        <div class="field" id="af-pw-wrap"><label for="af-password">Temporary password <span class="req" aria-hidden="true">*</span></label><input type="password" id="af-password" autocomplete="new-password"><span class="hint">At least 8 characters.</span><div class="error-text" id="af-password-error"></div></div>
+        <fieldset style="border:0;padding:0;margin:0"><legend class="label" style="font-weight:600;font-size:.92rem;margin-bottom:.35rem">Access <span class="req" aria-hidden="true">*</span></legend>
+          <div id="af-perms"></div><div class="error-text" id="af-perms-error"></div></fieldset>
+      </div>
+      <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn-primary" id="af-submit">Create administrator</button></div>
+    </form>
+  </dialog>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/page-admins.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">All reports</p>
+        <h1>Resident reports</h1>
+        <p>Search, filter and open any report to review it.</p>
+      </div>
+    </div>
+
+    <form class="filters" id="filters" role="search" aria-label="Filter reports" onsubmit="return false">
+      <div class="field"><label for="f-q">Search</label><input type="search" id="f-q" placeholder="Report ID, title, location or resident"></div>
+      <div class="field"><label for="f-status">Status</label><select id="f-status"></select></div>
+      <div class="field"><label for="f-priority">Priority</label><select id="f-priority"></select></div>
+      <div class="field"><label for="f-category">Category</label><select id="f-category"></select></div>
+      <div class="field"><label for="f-tag">Tag</label><select id="f-tag"></select></div>
+      <div class="field"><label for="f-sort">Sort by</label>
+        <select id="f-sort">
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+          <option value="priority">Priority (High first)</option>
+          <option value="updated">Recently updated</option>
+        </select></div>
+      <div class="field"><button type="button" class="btn btn-sm" id="f-clear">Clear filters</button></div>
+    </form>
+
+    <p class="result-count" id="count" aria-live="polite"></p>
+    <div class="table-wrap" id="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Report</th><th scope="col">Resident</th><th scope="col">Category</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Tags</th><th scope="col">Submitted</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="empty" hidden></div>
+  </main>
+  <div id="app-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/page-reports.js"></script>
+</body>
+</html>

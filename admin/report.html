@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report Details · ReportPoint Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div id="app-header"></div>
+  <main id="main">
+    <a class="back-link" href="reports.html">← Back to reports</a>
+    <div id="report-root" hidden>
+
+      <p class="eyebrow">Report details</p>
+      <h1 id="r-title"></h1>
+      <div class="row" style="margin-top:1.25rem;gap:1rem">
+        <span class="id-box" id="r-id"></span>
+        <span id="r-status"></span>
+        <span id="r-priority"></span>
+      </div>
+      <hr class="divider">
+      <div id="r-tracker" style="margin-bottom:2.5rem"></div>
+
+      <div class="report-layout">
+        <!-- LEFT: what was reported + history -->
+        <div class="stack">
+          <section class="card" aria-labelledby="sum-h">
+            <h2 id="sum-h">Summary</h2>
+            <dl class="kv" id="r-summary"></dl>
+          </section>
+          <section class="card" aria-labelledby="desc-h">
+            <h2 id="desc-h">Description</h2>
+            <p id="r-desc" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+          </section>
+          <section class="card" aria-labelledby="hist-h">
+            <h2 id="hist-h">Activity history</h2>
+            <p class="muted small">Every change is kept permanently. Newest first.</p>
+            <div id="r-history"></div>
+          </section>
+        </div>
+
+        <!-- RIGHT: things the admin can do -->
+        <div class="stack">
+          <section class="card" aria-labelledby="manage-h">
+            <h2 id="manage-h">Manage report</h2>
+            <div id="readonly-note" class="alert-box info" hidden>You have view-only access. Ask an administrator to give you the “Manage reports” permission.</div>
+
+            <div class="field">
+              <label for="status-select">Status</label>
+              <select id="status-select"></select>
+              <label for="status-msg" class="hint" style="font-weight:400">Optional note to resident (shown on their Track page)</label>
+              <input type="text" id="status-msg" maxlength="1000" placeholder="e.g. Our staff are reviewing the details of your report.">
+              <button class="btn btn-sm" id="status-btn" type="button" style="justify-self:start;margin-top:.4rem">Update status</button>
+            </div>
+
+            <div class="field">
+              <label for="priority-select">Priority</label>
+              <div class="row"><select id="priority-select" style="flex:1"></select><button class="btn btn-sm" id="priority-btn" type="button">Save</button></div>
+              <span class="hint">Changing priority never changes the status.</span>
+            </div>
+
+            <div class="field">
+              <span class="label" id="tags-label">Tags</span>
+              <div class="tag-list" id="tag-list" aria-labelledby="tags-label"></div>
+              <div class="tag-add" id="tag-add" aria-label="Add a tag"></div>
+            </div>
+
+            <hr class="divider" style="margin:1rem 0">
+            <div class="stack" style="gap:.6rem">
+              <button class="btn btn-warn btn-block" id="open-info" type="button">Request more information</button>
+              <button class="btn btn-primary btn-block" id="open-resolve" type="button">Mark as resolved</button>
+              <button class="btn btn-danger btn-block" id="open-reject" type="button">Reject report</button>
+            </div>
+          </section>
+
+          <!-- Two clearly different channels -->
+          <section class="channel public" aria-labelledby="pub-h">
+            <div class="channel-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span id="pub-h">Resident-visible comments<small>The resident WILL read these on their Track and View Details pages.</small></span>
+            </div>
+            <div class="channel-body">
+              <ul class="thread" id="comment-list" aria-live="polite"></ul>
+              <form id="comment-form" novalidate>
+                <div class="quick-replies" aria-label="Quick replies">
+                  <button type="button" data-text="Your report has been forwarded to the appropriate department.">Forwarded</button>
+                  <button type="button" data-text="An inspection has been scheduled.">Inspection scheduled</button>
+                  <button type="button" data-text="The reported issue has been addressed.">Addressed</button>
+                </div>
+                <div class="field" style="margin-bottom:.6rem">
+                  <label for="comment-text">Comment to resident</label>
+                  <textarea id="comment-text" rows="3" placeholder="Write something the resident should read…"></textarea>
+                  <div class="row between"><span class="error-text" id="comment-text-error"></span><span class="char-count" id="comment-text-count"></span></div>
+                </div>
+                <button class="btn btn-primary btn-sm" type="submit">Add comment</button>
+              </form>
+            </div>
+          </section>
+
+          <section class="channel private" aria-labelledby="priv-h">
+            <div class="channel-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+              <span id="priv-h">Internal notes — admins only<small>Residents can NEVER see these.</small></span>
+            </div>
+            <div class="channel-body">
+              <ul class="thread" id="note-list"></ul>
+              <form id="note-form" novalidate>
+                <div class="field" style="margin-bottom:.6rem">
+                  <label for="note-text">Private note</label>
+                  <textarea id="note-text" rows="3" placeholder="e.g. Coordinate with the maintenance team."></textarea>
+                  <div class="row between"><span class="error-text" id="note-text-error"></span><span class="char-count" id="note-text-count"></span></div>
+                </div>
+                <button class="btn btn-warn btn-sm" type="submit">Add internal note</button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="not-found" class="card" hidden>
+      <div class="empty"><strong>Report not found</strong>The report may have been removed, or the link is incorrect.</div>
+      <p style="text-align:center"><a class="btn" href="reports.html">Back to reports</a></p>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+
+  <!-- Request more information -->
+  <dialog id="dlg-info" aria-labelledby="dlg-info-h">
+    <form id="info-form" novalidate>
+      <div class="dlg-head"><h2 id="dlg-info-h">Request more information</h2>
+        <p>The resident will see your message, and the report status will change to <strong>Awaiting Resident Response</strong>.</p></div>
+      <div class="dlg-body">
+        <div class="field"><label for="info-needed">Information needed <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="info-needed" rows="2" placeholder="e.g. A clearer photo of the leak and the exact floor."></textarea>
+          <div class="error-text" id="info-needed-error"></div></div>
+        <div class="field"><label for="info-message">Message to the resident <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="info-message" rows="4" placeholder="e.g. Please provide a clearer description of the issue."></textarea>
+          <div class="row between"><span class="error-text" id="info-message-error"></span><span class="char-count" id="info-message-count"></span></div></div>
+      </div>
+      <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn-warn">Send request</button></div>
+    </form>
+  </dialog>
+
+  <!-- Reject -->
+  <dialog id="dlg-reject" aria-labelledby="dlg-reject-h">
+    <form id="reject-form" novalidate>
+      <div class="dlg-head"><h2 id="dlg-reject-h">Reject this report?</h2>
+        <p>The resident will be told the report was not accepted and why. The history entry stays on record.</p></div>
+      <div class="dlg-body">
+        <div class="field"><label for="reject-reason">Rejection reason <span class="req" aria-hidden="true">*</span></label>
+          <select id="reject-reason"></select>
+          <div class="error-text" id="reject-reason-error"></div></div>
+        <div class="field" id="reject-other-wrap" hidden><label for="reject-other">Explain the reason <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="reject-other" rows="2"></textarea>
+          <div class="error-text" id="reject-other-error"></div></div>
+        <div class="field"><label for="reject-message">Additional message to resident <span class="opt">(optional)</span></label>
+          <textarea id="reject-message" rows="3"></textarea>
+          <div class="row between"><span class="error-text" id="reject-message-error"></span><span class="char-count" id="reject-message-count"></span></div></div>
+      </div>
+      <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn-danger">Reject report</button></div>
+    </form>
+  </dialog>
+
+  <!-- Resolve -->
+  <dialog id="dlg-resolve" aria-labelledby="dlg-resolve-h">
+    <form id="resolve-form" novalidate>
+      <div class="dlg-head"><h2 id="dlg-resolve-h">Mark as resolved</h2>
+        <p>The status becomes <strong>Resolved</strong>. You can add a message the resident will see.</p></div>
+      <div class="dlg-body">
+        <div class="field"><label for="resolve-message">Message to resident <span class="opt">(optional)</span></label>
+          <textarea id="resolve-message" rows="3" placeholder="e.g. The reported issue has been addressed."></textarea>
+          <div class="row between"><span class="error-text" id="resolve-message-error"></span><span class="char-count" id="resolve-message-count"></span></div></div>
+      </div>
+      <div class="dlg-foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn-primary">Mark resolved</button></div>
+    </form>
+  </dialog>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/page-report.js"></script>
+</body>
+</html>

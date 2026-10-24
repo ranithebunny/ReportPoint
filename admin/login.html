@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login · ReportPoint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="login.html" aria-label="ReportPoint">
+      <img class="brand-mark" src="../assets/logo.svg" onerror="this.onerror=null;this.src='../assets/logo-placeholder.png'" alt="College Point">
+      <span class="brand-divider"></span><span class="brand-name">ReportPoint<span class="admin-badge">ADMIN</span></span></a>
+  </div></header>
+
+  <main id="main">
+    <div class="login-wrap">
+      <p class="eyebrow">Staff sign in</p>
+      <h1>Admin login</h1>
+      <p class="muted" style="margin:.75rem 0 1.5rem">Sign in to review and manage resident reports.</p>
+
+      <div class="card">
+        <!-- Residents and admins share one login page on the live site; this tab switch is a placeholder
+             until the shared login is built. The resident tab will link to ../resident/login.html. -->
+        <div class="role-switch" role="tablist" aria-label="Account type">
+          <a href="../resident/login.html">Resident</a>
+          <a href="login.html" aria-current="true">Admin</a>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div id="login-alert" class="alert-box danger" role="alert" hidden></div>
+          <div class="field">
+            <label for="username">Username <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+            <div class="error-text" id="username-error"></div>
+          </div>
+          <div class="field">
+            <label for="password">Password <span class="req" aria-hidden="true">*</span></label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <div class="error-text" id="password-error"></div>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+        <p class="hint" style="margin-top:1.25rem">
+          Forgot your password? Ask another administrator who can manage administrators.<br>
+          <strong>Demo account (front-end phase):</strong> <span class="mono">admin</span> / <span class="mono">admin123</span>
+        </p>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    if (RP.currentAdmin()) location.replace('dashboard.html');
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = form.username, p = form.password, alertBox = document.getElementById('login-alert');
+      UI.showFieldError(u, u.value.trim() ? '' : 'Enter your username.');
+      UI.showFieldError(p, p.value ? '' : 'Enter your password.');
+      if (!u.value.trim() || !p.value) return;
+      const res = RP.login(u.value, p.value);
+      if (!res.ok) { alertBox.textContent = res.error; alertBox.hidden = false; return; }
+      location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>
