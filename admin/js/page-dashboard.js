@@ -1,6 +1,6 @@
 /* Dashboard page */
-(function () {
-  const admin = UI.init({ page: 'dashboard' });
+(async function () {
+  const admin = await UI.init({ page: 'dashboard' });
   if (!admin) return;
 
   document.getElementById('who').textContent = admin.name.split(' ')[0] + '.';

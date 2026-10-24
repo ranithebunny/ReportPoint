@@ -1,6 +1,5 @@
-/* Report details page: view + every admin action on a single report */
-(function () {
-  const admin = UI.init({ page: 'reports' });
+(async function () {
+  const admin = await UI.init({ page: 'reports' });
   if (!admin) return;
 
   const $ = (id) => document.getElementById(id);

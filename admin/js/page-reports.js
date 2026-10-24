@@ -1,10 +1,29 @@
 /* Reports list page: search + filters + sort (all client-side for now; PHP will filter with SQL later) */
-(function () {
-  const admin = UI.init({ page: 'reports' });
+(async function () {
+  const admin = await UI.init({ page: 'reports' });
   if (!admin) return;
 
   const el = (id) => document.getElementById(id);
-  const all = RP.listReports();
+  let all = [];
+
+try {
+  const response = await fetch('../api/reports-list.php', {
+    credentials: 'same-origin',
+    cache: 'no-store'
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.error || 'Failed to load reports.');
+  }
+
+  all = result.reports;
+} catch (error) {
+  console.error('Could not load reports:', error);
+  document.getElementById('count').textContent = 'Could not load reports. Please refresh the page.';
+  return;
+}
   const ANY = '';
 
   const withAny = (label, arr) => `<option value="">${label}</option>` + UI.optionList(arr);

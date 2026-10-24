@@ -1,6 +1,6 @@
 /* Administrator accounts: create, edit access, deactivate */
-(function () {
-  const me = UI.init({ page: 'admins', perm: 'manage_admins' });
+(async function () {
+  const me = await UI.init({ page: 'admins', perm: 'manage_admins' });
   if (!me) return;
 
   const $ = (id) => document.getElementById(id);

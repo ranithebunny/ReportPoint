@@ -57,7 +57,19 @@ const UI = (() => {
     document.getElementById('app-footer').outerHTML = `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
     const toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('nav');
     toggle.addEventListener('click', () => { const o = nav.classList.toggle('open'); toggle.setAttribute('aria-expanded', o); });
-    document.getElementById('logout-btn').addEventListener('click', () => { RP.logout(); location.href = 'login.html'; });
+   document.getElementById('logout-btn').addEventListener('click', async () => {
+  const button = document.getElementById('logout-btn');
+  button.disabled = true;
+
+  try {
+    await fetch('../api/logout.php', {
+      method: 'POST',
+      credentials: 'same-origin'
+    });
+  } finally {
+    location.replace('login.html');
+  }
+});
     if (!document.querySelector('.toast-region')) document.body.insertAdjacentHTML('beforeend', '<div class="toast-region" role="status" aria-live="polite"></div>');
   }
 
@@ -66,16 +78,43 @@ const UI = (() => {
    * Redirects to login if not signed in; shows "no access" if the admin lacks `perm`.
    * Returns the signed-in admin, or null if the page should stop.
    */
-  function init({ page, perm }) {
-    const admin = RP.currentAdmin();
-    if (!admin) { location.replace('login.html'); return null; }
-    renderChrome(admin, page);
-    if (perm && !RP.can(admin, perm)) {
-      document.getElementById('main').innerHTML = `<div class="card">${emptyState('You don’t have access to this page', 'Ask an administrator who can manage administrators to update your access.')}<p style="text-align:center"><a class="btn" href="dashboard.html">Back to dashboard</a></p></div>`;
+
+  async function init({ page, perm }) {
+    let response;
+    let result;
+
+    try {
+      response = await fetch('../api/session.php', {
+        credentials: 'same-origin',
+        cache: 'no-store'
+      });
+
+      result = await response.json();
+    } catch (error) {
+      location.replace('login.html');
       return null;
     }
+
+    if (!response.ok || !result.authenticated || !result.admin) {
+      location.replace('login.html');
+      return null;
+    }
+
+    const admin = result.admin;
+    renderChrome(admin, page);
+
+    if (perm && !admin.permissions.includes(perm)) {
+      document.getElementById('main').innerHTML =
+        `<div class="card">${emptyState(
+          'You don’t have access to this page',
+          'Ask an administrator who can manage administrators to update your access.'
+        )}<p style="text-align:center"><a class="btn" href="dashboard.html">Back to dashboard</a></p></div>`;
+      return null;
+    }
+
     return admin;
   }
+
 
   /* ---------- Toasts ---------- */
   function toast(message, type = 'success') {
