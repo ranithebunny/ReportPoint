@@ -33,7 +33,7 @@ const UI = (() => {
   const emptyState = (title, text) => `<div class="empty"><strong>${esc(title)}</strong>${esc(text)}</div>`;
 
   /* ---------- Header / footer / guard ---------- */
-  const LOGO = `<img class="brand-mark" src="../assets/logo.svg" onerror="this.onerror=null;this.src='../assets/logo-placeholder.png'" alt="College Point">`;
+  const LOGO = `<img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">`;
   const NAV = [
     { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html' },
     { key: 'reports', label: 'Reports', href: 'reports.html' },
