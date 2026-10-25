@@ -35,7 +35,7 @@ async function loadResidents() {
     $('count').textContent = `Showing ${list.length} of ${all.length} resident${all.length === 1 ? '' : 's'}`;
     $('table-wrap').hidden = !list.length; $('empty').hidden = !!list.length;
     if (!list.length) {
-      $('empty').innerHTML = `<div class="card">${UI.emptyState(q || st ? 'No residents match your search' : 'No resident accounts yet', q || st ? 'Check the spelling or clear the filters.' : 'Use “Create resident account” to add the first one.')}</div>`;
+      $('empty').innerHTML = `<div class="card">${UI.emptyState(q || st ? 'No residents match your search' : 'No resident accounts yet', q || st ? 'Check the spelling or clear the filters.' : 'Use the Create resident account button to add one.')}</div>`;
       return;
     }
     $('rows').innerHTML = list.map((r) => {
@@ -46,7 +46,7 @@ async function loadResidents() {
       return `<tr>
         <td data-label="Full name"><a class="title-link" href="resident.html?id=${r.id}">${UI.esc(r.name)}</a></td>
         <td data-label="Unit">${UI.esc(r.unit)}</td>
-        <td data-label="Resident ID"><span class="mono">${UI.esc(r.residentId)}</span></td>
+        <td data-label="Username"><span class="mono">${UI.esc(r.residentId)}</span></td>
         <td data-label="Password status">${passwordStatus}</td>
         <td data-label="Status">${UI.accountPill(r.active)}</td>
         <td data-label="Created"><span class="small">${UI.fmtDate(r.createdAt)}</span></td>
@@ -176,7 +176,7 @@ $('resident-form').addEventListener('submit', async (e) => {
   const isEditing = Boolean(editingId);
   let result;
 
- 
+  
   try {
     const response = await fetch(
       isEditing
@@ -229,5 +229,5 @@ catch (error) {
 
   ['f-q', 'f-status'].forEach((i) => $(i).addEventListener('input', render));
   $('f-clear').addEventListener('click', () => { $('f-q').value = ''; $('f-status').value = ''; render(); });
-loadResidents();
+  loadResidents();
 })();
