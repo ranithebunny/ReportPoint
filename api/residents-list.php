@@ -20,7 +20,7 @@ try {
          LIMIT 1'
     );
     $auth->execute([$_SESSION['admin_id']]);
-    $admin = $auth->fetch();
+    $admin = $auth->fetch(PDO::FETCH_ASSOC);
 
     if (!$admin || !(int)$admin['is_active']) {
         http_response_code(401);
@@ -55,13 +55,15 @@ try {
          ORDER BY r.full_name ASC'
     );
 
-    $residents = $stmt->fetchAll();
+    // Explicitly fetch as an associative array
+    $residents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($residents as &$resident) {
-        $resident['id'] = (string)$resident['id'];
-        $resident['active'] = (bool)$resident['active'];
-        $resident['passwordChanged'] = !(bool)$resident['passwordChanged'];
-        $resident['reportCount'] = (int)$resident['reportCount'];
+        $resident['id'] = (string)($resident['id'] ?? '');
+        $resident['active'] = (bool)($resident['active'] ?? false);
+        $resident['passwordChanged'] = !((bool)($resident['passwordChanged'] ?? false));
+        $resident['reportCount'] = (int)($resident['reportCount'] ?? 0);
+    
         $resident['defaultPassword'] = null;
     }
     unset($resident);

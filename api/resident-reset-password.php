@@ -62,7 +62,7 @@ try {
         'UPDATE residents
          SET password_hash = ?,
              default_password = ?,
-             must_change_password = 1
+             must_change_password = TRUE
          WHERE resident_id = ?'
     );
     $update->execute([$passwordHash, $temporaryPassword, $residentId]);

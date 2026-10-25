@@ -30,7 +30,7 @@ try {
          FROM admins a
          INNER JOIN admin_permissions p ON p.admin_id = a.admin_id
          WHERE a.admin_id = :id
-           AND a.is_active = 1
+           AND a.is_active = TRUE
            AND p.permission = :permission'
     );
 

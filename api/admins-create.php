@@ -30,7 +30,7 @@ try {
          FROM admins a
          INNER JOIN admin_permissions p ON p.admin_id = a.admin_id
          WHERE a.admin_id = :id
-           AND a.is_active = 1
+           AND a.is_active = TRUE
            AND p.permission = :permission'
     );
 
@@ -115,9 +115,9 @@ try {
     // Save the administrator and permissions together.
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare(
+   $stmt = $pdo->prepare(
         'INSERT INTO admins (username, full_name, email, password_hash, is_active)
-         VALUES (:username, :name, :email, :password_hash, 1)'
+         VALUES (:username, :name, :email, :password_hash, TRUE)'
     );
 
     $stmt->execute([

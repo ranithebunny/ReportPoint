@@ -1,14 +1,46 @@
 <?php
 declare(strict_types=1);
 
-$host = 'localhost';
-$dbname = 'reportpoint';
-$username = 'reportpoint_app';
-$password = 'ReportPointApp2026!';
+function loadEnv(string $path): void
+{
+    if (!is_readable($path)) {
+        throw new RuntimeException('.env file is missing or unreadable.');
+    }
+
+    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+
+        if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
+            continue;
+        }
+
+        [$key, $value] = explode('=', $line, 2);
+
+        $key = trim($key);
+        $value = trim($value);
+
+        if ($key !== '') {
+            putenv("$key=$value");
+        }
+    }
+}
 
 try {
+    // .env is in the ReportPoint project root.
+    loadEnv(dirname(__DIR__) . '/.env');
+
+    $host = getenv('DB_HOST');
+    $port = getenv('DB_PORT') ?: '5432';
+    $dbname = getenv('DB_NAME') ?: 'postgres';
+    $username = getenv('DB_USER');
+    $password = getenv('DB_PASSWORD');
+
+    if (!$host || !$username || $password === false || $password === '') {
+        throw new RuntimeException('Required database configuration is missing.');
+    }
+
     $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require",
         $username,
         $password,
         [
@@ -17,8 +49,9 @@ try {
             PDO::ATTR_EMULATE_PREPARES => false,
         ]
     );
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     error_log('ReportPoint database connection failed: ' . $e->getMessage());
+
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['error' => 'Database connection failed.']);

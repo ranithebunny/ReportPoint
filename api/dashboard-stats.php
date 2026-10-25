@@ -127,21 +127,22 @@ try {
         ];
     }
 
+    
     // Recent report activity, with the report code and admin/resident actor.
-    $recent = $pdo->query('
+    $recent = $pdo->query("
         SELECT
             h.event_type AS type,
             h.created_at AS at,
-            h.old_value AS oldValue,
-            h.new_value AS newValue,
-            r.report_code AS reportId,
-            r.title AS reportTitle,
+            h.old_value AS \"oldValue\",
+            h.new_value AS \"newValue\",
+            r.report_code AS \"reportId\",
+            r.title AS \"reportTitle\",
             CASE
-                WHEN h.actor_type = "admin" THEN
-                    COALESCE(a.full_name, "Administrator")
-                WHEN h.actor_type = "resident" THEN
-                    COALESCE(res.full_name, "Resident")
-                ELSE "System"
+                WHEN h.actor_type = 'admin' THEN
+                    COALESCE(a.full_name, 'Administrator')
+                WHEN h.actor_type = 'resident' THEN
+                    COALESCE(res.full_name, 'Resident')
+                ELSE 'System'
             END AS actor
         FROM report_history h
         INNER JOIN reports r ON r.report_id = h.report_id
@@ -149,7 +150,8 @@ try {
         LEFT JOIN residents res ON res.resident_id = h.resident_id
         ORDER BY h.created_at DESC, h.history_id DESC
         LIMIT 8
-    ')->fetchAll();
+    ")->fetchAll();
+
 
     echo json_encode([
         'ok' => true,

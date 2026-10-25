@@ -42,17 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 try {
-    $sql = '
+   
+    $sql = "
         SELECT
             r.report_id,
             r.report_code,
             r.title,
             r.location,
-            COALESCE(res.full_name, "Unknown") AS residentName,
-            COALESCE(res.unit, "") AS unit,
-            COALESCE(c.name, "Uncategorized") AS category,
-            COALESCE(p.name, "Medium") AS priority,
-            COALESCE(s.name, "Received") AS status,
+            COALESCE(res.full_name, 'Unknown') AS residentName,
+            COALESCE(res.unit, '') AS unit,
+            COALESCE(c.name, 'Uncategorized') AS category,
+            COALESCE(p.name, 'Medium') AS priority,
+            COALESCE(s.name, 'Received') AS status,
             r.created_at AS submittedAt,
             r.updated_at AS updatedAt
         FROM reports r
@@ -61,7 +62,8 @@ try {
         LEFT JOIN priorities p ON p.priority_id = r.priority_id
         LEFT JOIN statuses s ON s.status_id = r.status_id
         ORDER BY r.created_at DESC
-    ';
+    ";
+
 
     $reports = $pdo->query($sql)->fetchAll();
 

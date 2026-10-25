@@ -32,7 +32,7 @@ try {
          INNER JOIN admin_permissions ap
             ON ap.admin_id = a.admin_id
          WHERE a.admin_id = ?
-           AND a.is_active = 1
+           AND a.is_active = TRUE
            AND ap.permission = 'manage_residents'
          LIMIT 1"
     );
@@ -79,20 +79,24 @@ try {
     $resident['id'] = (string)$resident['id'];
     $resident['active'] = (bool)$resident['active'];
 
+    
     // Load only reports submitted by this resident.
     $reportsStmt = $pdo->prepare(
-        'SELECT
+        "SELECT
             r.report_code AS id,
             r.title,
-            COALESCE(s.name, "Received") AS status,
-            COALESCE(p.name, "Medium") AS priority,
+            COALESCE(s.name, 'Received') AS status,
+            COALESCE(p.name, 'Medium') AS priority,
             r.created_at AS submittedAt
          FROM reports r
          LEFT JOIN statuses s ON s.status_id = r.status_id
          LEFT JOIN priorities p ON p.priority_id = r.priority_id
          WHERE r.resident_id = ?
-         ORDER BY r.created_at DESC'
+         ORDER BY r.created_at DESC"
     );
+    $reportsStmt->execute([$id]);
+    $resident['reports'] = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
+
     $reportsStmt->execute([$id]);
     $resident['reports'] = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
 

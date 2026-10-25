@@ -74,12 +74,14 @@ try {
     $pdo->beginTransaction();
 
     // Lock the resident table while choosing the next sequential ID.
-    $maxQuery = $pdo->query(
-        "SELECT MAX(CAST(SUBSTRING(resident_code, 4) AS UNSIGNED))
-         FROM residents WHERE resident_code REGEXP '^CP-[0-9]+$' FOR UPDATE"
-    );
-    $maxNumber = (int)$maxQuery->fetchColumn();
-    $nextNumber = max(3000, $maxNumber) + 1;
+   $maxQuery = $pdo->query(
+    "SELECT MAX(CAST(SUBSTRING(resident_code, 4) AS INTEGER))
+     FROM residents
+     WHERE resident_code ~ '^CP-[0-9]+$'"
+);
+
+$maxNumber = (int)$maxQuery->fetchColumn();
+$nextNumber = max(3000, $maxNumber) + 1;
 
     if ($nextNumber > 999999) {
         $pdo->rollBack();
@@ -91,26 +93,35 @@ try {
     $temporaryPassword = 'Cp-' . bin2hex(random_bytes(4));
     $passwordHash = password_hash($temporaryPassword, PASSWORD_DEFAULT);
 
-    $insert = $pdo->prepare(
-        'INSERT INTO residents
-         (resident_code, full_name, unit, email, phone, password_hash,
-          default_password, must_change_password, is_active, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1, ?)'
-    );
+   $insert = $pdo->prepare(
+    'INSERT INTO residents
+     (resident_id, resident_code, full_name, unit, email, phone, password_hash,
+      default_password, must_change_password, is_active, created_by)
+     VALUES (nextval(\'public.residents_resident_id_seq\'), :resident_code, :full_name, :unit, :email, :phone, :password_hash,
+      :default_password, TRUE, TRUE, :created_by)
+     RETURNING resident_id'
+);
 
-    $insert->execute([
-        $residentCode,
-        $name,
-        $unit,
-        $email !== '' ? $email : null,
-        $phone !== '' ? $phone : null,
-        $passwordHash,
-        $temporaryPassword,
-        $_SESSION['admin_id']
-    ]);
+$insert->execute([
+    'resident_code' => $residentCode,
+    'full_name' => $name,
+    'unit' => $unit,
+    'email' => $email !== '' ? $email : null,
+    'phone' => $phone !== '' ? $phone : null,
+    'password_hash' => $passwordHash,
+    'default_password' => $temporaryPassword,
+    'created_by' => $_SESSION['admin_id']
+]);
 
-    $residentId = (int)$pdo->lastInsertId();
+$residentId = (int)$insert->fetchColumn();
 
+$insert = $pdo->prepare(
+    'INSERT INTO residents
+     (resident_id, resident_code, full_name, unit, email, phone, password_hash,
+      default_password, must_change_password, is_active, created_by)
+     VALUES (nextval(\'public.residents_resident_id_seq\'), $1, $2, $3, $4, $5, $6, $7, TRUE, TRUE, $8)
+     RETURNING resident_id'
+);
     $pdo->commit();
 
     respond(201, [
