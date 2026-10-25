@@ -46,7 +46,7 @@ async function loadResidents() {
       return `<tr>
         <td data-label="Full name"><a class="title-link" href="resident.html?id=${r.id}">${UI.esc(r.name)}</a></td>
         <td data-label="Unit">${UI.esc(r.unit)}</td>
-        <td data-label="Username"><span class="mono">${UI.esc(r.residentId)}</span></td>
+        <td data-label="Resident ID"><span class="mono">${UI.esc(r.residentId)}</span></td>
         <td data-label="Password status">${passwordStatus}</td>
         <td data-label="Status">${UI.accountPill(r.active)}</td>
         <td data-label="Created"><span class="small">${UI.fmtDate(r.createdAt)}</span></td>
