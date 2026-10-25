@@ -1,6 +1,20 @@
 # GitHub Collaboration Guide
 
-This guide explains how to collaborate on ReportPoint using Git and GitHub. Follow these steps whenever you need to make changes to the project.
+This guide explains how to collaborate on **ReportPoint** using Git and GitHub. Follow these steps whenever you need to make changes to the project.
+
+## Project Links
+
+- **Repository:** https://github.com/ranithebunny/ReportPoint
+- **Resident Interface:** https://reportpoint.onrender.com/resident/index.html
+- **Admin Dashboard:** https://reportpoint.onrender.com/admin/residents.html
+
+## Current Project Status
+
+- **Admin Dashboard:** Functional and accessible through the live website.
+- **Resident Interface:** Still under development. The page is currently blank because the resident-facing interface has not been implemented yet.
+- **Deployment:** The project is hosted on Render, with Supabase PostgreSQL used for the database.
+
+**Important:** The resident page being blank is expected at this stage. Please do not treat it as a deployment issue unless other errors appear.
 
 ## 1. Install the Required Tools
 
