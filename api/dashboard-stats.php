@@ -138,12 +138,12 @@ try {
             r.report_code AS \"reportId\",
             r.title AS \"reportTitle\",
             CASE
-                WHEN h.actor_type = 'admin' THEN
-                    COALESCE(a.full_name, 'Administrator')
-                WHEN h.actor_type = 'resident' THEN
-                    COALESCE(res.full_name, 'Resident')
-                ELSE 'System'
-            END AS actor
+    WHEN h.actor_type = 'admin' THEN
+        COALESCE(a.full_name, 'Administrator')
+    WHEN h.actor_type = 'resident' THEN
+        COALESCE(res.full_name, 'Resident')
+    ELSE 'System'
+END AS actor
         FROM report_history h
         INNER JOIN reports r ON r.report_id = h.report_id
         LEFT JOIN admins a ON a.admin_id = h.admin_id

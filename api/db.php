@@ -26,8 +26,12 @@ function loadEnv(string $path): void
 }
 
 try {
-    // .env is in the ReportPoint project root.
-    loadEnv(dirname(__DIR__) . '/.env');
+    // Load .env locally; on Render, use the configured environment variables.
+$envPath = dirname(__DIR__) . '/.env';
+
+if (is_file($envPath)) {
+    loadEnv($envPath);
+}
 
     $host = getenv('DB_HOST');
     $port = getenv('DB_PORT') ?: '5432';
