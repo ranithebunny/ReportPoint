@@ -54,17 +54,17 @@ try {
         respond(400, ['ok' => false, 'error' => 'Invalid resident ID.']);
     }
 
-    // Load the resident's account information.
+    // Load the resident's account information with quoted camelCase aliases.
     $residentStmt = $pdo->prepare(
         'SELECT
             resident_id AS id,
-            resident_code AS residentId,
+            resident_code AS "residentId",
             full_name AS name,
             unit,
             email,
             phone,
             is_active AS active,
-            created_at AS createdAt
+            created_at AS "createdAt"
          FROM residents
          WHERE resident_id = ?
          LIMIT 1'
@@ -79,7 +79,6 @@ try {
     $resident['id'] = (string)$resident['id'];
     $resident['active'] = (bool)$resident['active'];
 
-    
     // Load only reports submitted by this resident.
     $reportsStmt = $pdo->prepare(
         "SELECT
@@ -94,9 +93,6 @@ try {
          WHERE r.resident_id = ?
          ORDER BY r.created_at DESC"
     );
-    $reportsStmt->execute([$id]);
-    $resident['reports'] = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
-
     $reportsStmt->execute([$id]);
     $resident['reports'] = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
 
