@@ -31,14 +31,14 @@ try {
     $stmt = $pdo->query(
         'SELECT
             r.resident_id AS id,
-            r.resident_code AS residentId,
+            r.resident_code AS "residentId",
             r.full_name AS name,
             r.unit,
             r.email,
             r.phone,
             r.is_active AS active,
-            r.must_change_password AS passwordChanged,
-            r.created_at AS createdAt,
+            r.must_change_password AS "passwordChanged",
+            r.created_at AS "createdAt",
             COUNT(rep.report_id) AS reportCount
          FROM residents r
          LEFT JOIN reports rep ON rep.resident_id = r.resident_id
