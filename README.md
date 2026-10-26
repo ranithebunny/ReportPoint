@@ -6,7 +6,7 @@ This guide explains how to collaborate on **ReportPoint** using Git and GitHub. 
 
 - **Repository:** https://github.com/ranithebunny/ReportPoint
 - **Resident Interface:** https://reportpoint.onrender.com/resident/index.html
-- **Admin Dashboard:** https://reportpoint.onrender.com/admin/residents.html
+- **Admin Dashboard:** https://reportpoint.onrender.com/admin/login.html
 
 ## Test Admin Account
 
