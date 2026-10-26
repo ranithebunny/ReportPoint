@@ -149,7 +149,7 @@ This switches to `main` and downloads the latest changes.
 
 ## 5. Create Your Own Branch
 
-Do not work directly on `main`. Each team member should create a separate branch for their work.
+Do not work directly on `main`. 
 
 For example:
 
@@ -168,7 +168,6 @@ Use a descriptive branch name that matches your task.
 | Type of Work | Example |
 | --- | --- |
 | New feature | `feature/resident-interface` |
-| Admin feature | `feature/admin-dashboard` |
 | Bug fix | `fix/report-status-update` |
 | Styling | `style/responsive-layout` |
 | Documentation | `docs/update-readme` |
