@@ -18,7 +18,6 @@ Use the following credentials to access the admin dashboard for testing.
 - **Resident Interface:** Under development. Resident login and password change functionality have been implemented, while the resident dashboard and other resident-facing features are still pending.
 - **Deployment:** The project is hosted on Render, with Supabase PostgreSQL used for the database.
 
-**Important:** The resident page being blank is expected at this stage. Please do not treat it as a deployment issue unless other errors appear.
 
 ## 1. Install the Required Tools
 
