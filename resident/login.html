@@ -1,13 +1,155 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ReportPoint · login</title>
-  <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
+  <title>Resident Login · ReportPoint</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="../admin/css/admin.css">
 </head>
+
 <body>
-  <!-- TODO (Vinnie): login page -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="login.html" aria-label="ReportPoint">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">
+          ReportPoint<span class="admin-badge">RESIDENT</span>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="login-wrap">
+      <p class="eyebrow">Community sign in</p>
+      <h1>Resident login</h1>
+      <p class="muted" style="margin:.75rem 0 1.5rem">
+        Sign in to submit reports and track your concerns.
+      </p>
+
+      <div class="card">
+
+        <div class="role-switch" role="tablist" aria-label="Account type">
+          <a href="login.html" aria-current="true">Resident</a>
+          <a href="../admin/login.html">Admin</a>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div id="login-alert" class="alert-box danger" role="alert" hidden></div>
+
+          <div class="field">
+            <label for="resident-code">
+              Resident ID <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              type="text"
+              id="resident-code"
+              name="resident_code"
+              autocomplete="username"
+              placeholder="e.g. CP-3002"
+              required
+            >
+            <div class="error-text" id="resident-code-error"></div>
+          </div>
+
+          <div class="field">
+            <label for="password">
+              Password <span class="req" aria-hidden="true">*</span>
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              required
+            >
+            <div class="error-text" id="password-error"></div>
+          </div>
+
+          <button class="btn btn-primary btn-block" type="submit">
+            Sign in
+          </button>
+        </form>
+
+        <p class="hint" style="margin-top:1.25rem">
+          Don't have your login credentials? Please contact your administrator.
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila
+  </footer>
+
+  <script src="../admin/js/ui.js"></script>
+
+  <script>
+    const form = document.getElementById('login-form');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const residentCode = form.elements['resident_code'];
+      const password = form.elements['password'];
+      const alertBox = document.getElementById('login-alert');
+
+      alertBox.hidden = true;
+
+      UI.showFieldError(
+        residentCode,
+        residentCode.value.trim() ? '' : 'Enter your Resident ID.'
+      );
+
+      UI.showFieldError(
+        password,
+        password.value ? '' : 'Enter your password.'
+      );
+
+      if (!residentCode.value.trim() || !password.value) return;
+
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+
+      try {
+        const response = await fetch('../api/resident-login.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            resident_code: residentCode.value.trim(),
+            password: password.value
+          })
+        });
+
+        const res = await response.json();
+
+        if (!response.ok || !res.ok) {
+          alertBox.textContent = res.error || res.message || 'Login failed.';
+          alertBox.hidden = false;
+          return;
+        }
+
+        location.href = res.redirect;
+
+      } catch (error) {
+        alertBox.textContent =
+          'Unable to connect to the server. Please try again.';
+        alertBox.hidden = false;
+
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
