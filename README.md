@@ -2,22 +2,16 @@
 
 This guide explains how to collaborate on **ReportPoint** using Git and GitHub. Follow these steps whenever you need to make changes to the project.
 
-## Project Links
-
-- **Resident Interface:** https://reportpoint.onrender.com/resident/login.html
-- **Admin Dashboard:** https://reportpoint.onrender.com/admin/login.html
-
-Use the following credentials to access the admin dashboard for testing.
-
-- **Username:** `test-acc`
-- **Password:** `admin123`
-
 ## Current Project Status
 
 - **Admin Dashboard:** Functional and accessible through the live website.
 - **Resident Interface:** Under development. Resident login and password change functionality have been implemented, while the resident dashboard and other resident-facing features are still pending.
 - **Deployment:** The project is hosted on Render, with Supabase PostgreSQL used for the database.
 
+Use the following credentials to access the admin dashboard for testing.
+
+- **Username:** `test-acc`
+- **Password:** `admin123`
 
 ## 1. Install the Required Tools
 
