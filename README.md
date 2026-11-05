@@ -4,7 +4,7 @@ This guide explains how to collaborate on **ReportPoint** using Git and GitHub. 
 
 ## Project Links
 
-- **Resident Interface:** https://reportpoint.onrender.com/resident/index.html
+- **Resident Interface:** https://reportpoint.onrender.com/resident/login.html
 - **Admin Dashboard:** https://reportpoint.onrender.com/admin/login.html
 
 Use the following credentials to access the admin dashboard for testing.
