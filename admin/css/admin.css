@@ -46,7 +46,10 @@ a:hover { color: #fff; }
 .nav-toggle { display: none; background: none; border: 1px solid var(--line-soft); color: var(--text); border-radius: 8px; padding: .5rem .7rem; font-size: 1.2rem; cursor: pointer; }
 .site-footer { background: var(--bg-footer); text-align: center; padding: 1rem; font-size: .88rem; color: var(--text-muted); margin-top: auto; }
 .site-footer strong { color: var(--text); }
-
+.site-footer p,
+.site-footer .copyright {
+  margin: 0; /* Remove default browser paragraph margins */
+}
 /* ---------- 3. Layout ---------- */
 main { width: 100%; max-width: var(--content-width); margin: 0 auto; padding: 2.5rem 1.5rem 4rem; flex: 1; }
 .page-head { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
