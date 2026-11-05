@@ -8,10 +8,12 @@ This guide explains how to collaborate on **ReportPoint** using Git and GitHub. 
 - **Resident Interface:** Under development. Resident login and password change functionality have been implemented, while the resident dashboard and other resident-facing features are still pending.
 - **Deployment:** The project is hosted on Render, with Supabase PostgreSQL used for the database.
 
-Use the following credentials to access the admin dashboard for testing.
+### Test Credentials
 
-- **Username:** `test-acc`
-- **Password:** `admin123`
+| Role | Username | Password | Notes |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `test-acc` | `admin123` | Full administrative access |
+| **Resident** | `CP-3003` | `residentaccount123` | Standard resident access |
 
 ## 1. Install the Required Tools
 
