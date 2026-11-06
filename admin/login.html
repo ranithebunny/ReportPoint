@@ -35,7 +35,7 @@
           <div id="login-alert" class="alert-box danger" role="alert" hidden></div>
           <div class="field">
             <label for="username">Username <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="username" name="username" autocomplete="username" required>
+            <input type="text" id="username" name="username" autocomplete="username" required  aria-describedby="username-error">
             <div class="error-text" id="username-error"></div>
           </div>
           <div class="field">
@@ -50,6 +50,7 @@
       name="password"
       autocomplete="current-password"
       required
+      aria-describedby="password-error"
     >
 
     <button
@@ -86,6 +87,6 @@
 <script src="js/data.js"></script>
 <script src="js/ui.js"></script>
 <script src="../js/password-toggle.js"></script>
-
+<script src="../js/login-validation.js"></script>
 </body>
 </html>

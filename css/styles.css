@@ -279,6 +279,17 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
   outline-offset: 3px;
   border-radius: 4px;
 }
+
+/* Login validation */
+.field input[aria-invalid="true"] {
+  border-color: #dc3545;
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
 /* ---------- Dashboard Skeleton Loading ---------- */
 
 .skeleton {

@@ -56,6 +56,7 @@
               autocomplete="username"
               placeholder="e.g. CP-3002"
               required
+              aria-describedby="username-error"
             >
             <div class="error-text" id="resident-code-error"></div>
           </div>
@@ -72,6 +73,7 @@
       name="password"
       autocomplete="current-password"
       required
+      aria-describedby="password-error"
     >
 
     <button
@@ -119,9 +121,9 @@
   </div>
 </footer>
 
-  <script src="../admin/js/ui.js"></script>
-  <script src="../js/password-toggle.js"></script>
-
+<script src="../admin/js/ui.js"></script>
+<script src="../js/password-toggle.js"></script>
+<script src="../js/login-validation.js"></script>
   
 </body>
 </html>
