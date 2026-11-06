@@ -1,8 +1,6 @@
 /* ==========================================================
    ReportPoint — shared design tokens
-   Taken from Vinnie's Resident Interface screenshots.
    If the resident colors change, edit ONLY this file.
-   (Copy it to resident/css/ too so both sides stay in sync.)
    ========================================================== */
 :root {
   /* Backgrounds */
