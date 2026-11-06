@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       location.replace(
-        isResident ? '../resident/dashboard.html' : 'dashboard.html'
+        isResident ? '../resident/index.html' : 'index.html'
       );
 
     } catch (error) {
