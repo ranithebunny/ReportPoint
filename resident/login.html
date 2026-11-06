@@ -61,18 +61,39 @@
           </div>
 
           <div class="field">
-            <label for="password">
-              Password <span class="req" aria-hidden="true">*</span>
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              autocomplete="current-password"
-              required
-            >
-            <div class="error-text" id="password-error"></div>
-          </div>
+  <label for="password">
+    Password <span class="req" aria-hidden="true">*</span>
+  </label>
+
+  <div class="password-wrapper">
+    <input
+      type="password"
+      id="password"
+      name="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button
+      type="button"
+      class="password-toggle"
+      id="toggle-password"
+      aria-label="Show password"
+      aria-pressed="false"
+    >
+      <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg"
+        width="20" height="20" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"
+        aria-hidden="true">
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="error-text" id="password-error"></div>
+</div>
 
           <button class="btn btn-primary btn-block" type="submit">
             Sign in
@@ -99,64 +120,8 @@
 </footer>
 
   <script src="../admin/js/ui.js"></script>
+  <script src="../js/password-toggle.js"></script>
 
-  <script>
-    const form = document.getElementById('login-form');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const residentCode = form.elements['resident_code'];
-      const password = form.elements['password'];
-      const alertBox = document.getElementById('login-alert');
-
-      alertBox.hidden = true;
-
-      UI.showFieldError(
-        residentCode,
-        residentCode.value.trim() ? '' : 'Enter your Resident ID.'
-      );
-
-      UI.showFieldError(
-        password,
-        password.value ? '' : 'Enter your password.'
-      );
-
-      if (!residentCode.value.trim() || !password.value) return;
-
-      const button = form.querySelector('button[type="submit"]');
-      button.disabled = true;
-
-      try {
-        const response = await fetch('../api/resident-login.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-          body: JSON.stringify({
-            resident_code: residentCode.value.trim(),
-            password: password.value
-          })
-        });
-
-        const res = await response.json();
-
-        if (!response.ok || !res.ok) {
-          alertBox.textContent = res.error || res.message || 'Login failed.';
-          alertBox.hidden = false;
-          return;
-        }
-
-        location.href = res.redirect;
-
-      } catch (error) {
-        alertBox.textContent =
-          'Unable to connect to the server. Please try again.';
-        alertBox.hidden = false;
-
-      } finally {
-        button.disabled = false;
-      }
-    });
-  </script>
+  
 </body>
 </html>
