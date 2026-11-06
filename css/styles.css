@@ -390,6 +390,7 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
 }
 
 @media (max-width: 720px) {
+  
   .skeleton-bar-row {
     grid-template-columns: 110px 1fr 28px;
   }
@@ -458,8 +459,16 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
   .tracker li.current .node { box-shadow: inset 0 0 0 4px var(--bg-card), inset 0 0 0 20px var(--green-strong); }
   .tracker svg { width: 18px; height: 18px; }
   .id-box { font-size: 1.4rem; padding: .4rem 1rem; }
-  .bar-row { grid-template-columns: 110px 1fr 28px; }
-  /* Tables turn into stacked cards on phones */
+  .bar-row {
+  grid-template-columns: minmax(0, 1fr) minmax(60px, 0.55fr) 28px;
+  gap: .5rem;
+}
+
+.bar-row > :first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
   .table-wrap { border: 0; background: none; overflow: visible; }
   table, thead, tbody, tr, td { display: block; min-width: 0; width: 100%; }
   thead { position: absolute; left: -9999px; }
