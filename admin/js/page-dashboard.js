@@ -1,4 +1,55 @@
 /* Dashboard page: live MySQL statistics */
+function showDashboardSkeleton() {
+  const el = (id) => document.getElementById(id);
+
+  // Statistics placeholders
+  el('stats').innerHTML = Array.from({ length: 7 }, () => `
+    <div class="stat-skeleton" aria-hidden="true">
+      <div class="skeleton skeleton-number"></div>
+      <div class="skeleton skeleton-label"></div>
+    </div>
+  `).join('');
+
+  // Needs attention placeholders
+  el('attention').innerHTML = Array.from({ length: 3 }, () => `
+    <div class="skeleton-row" aria-hidden="true">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-meta"></div>
+    </div>
+  `).join('');
+
+  // Category placeholders
+  el('categories').innerHTML = Array.from({ length: 4 }, () => `
+    <div class="skeleton-bar-row" aria-hidden="true">
+      <div class="skeleton skeleton-category"></div>
+      <div class="skeleton skeleton-bar"></div>
+      <div class="skeleton skeleton-count"></div>
+    </div>
+  `).join('');
+
+  // Priority placeholders
+  el('priorities').innerHTML = Array.from({ length: 3 }, () => `
+    <div class="skeleton-bar-row" aria-hidden="true">
+      <div class="skeleton skeleton-category"></div>
+      <div class="skeleton skeleton-bar"></div>
+      <div class="skeleton skeleton-count"></div>
+    </div>
+  `).join('');
+
+  // Recent activity placeholders
+  el('recent').innerHTML = Array.from({ length: 4 }, () => `
+    <div class="skeleton-activity" aria-hidden="true">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-time"></div>
+    </div>
+  `).join('');
+
+  // Mark dashboard content as loading
+  document.getElementById('main').setAttribute('aria-busy', 'true');
+}
+
+showDashboardSkeleton();
+
 (async function () {
   const admin = await UI.init({ page: 'dashboard' });
   if (!admin) return;
@@ -165,8 +216,13 @@
           'Activity will appear here when reports are submitted or updated.'
         );
 
+        // Dashboard data has finished loading
+document.getElementById('main').setAttribute('aria-busy', 'false');
+
   } catch (error) {
     console.error('Could not load dashboard:', error);
+
+    document.getElementById('main').setAttribute('aria-busy', 'false');
 
     el('stats').innerHTML = '';
     el('attention').innerHTML = UI.emptyState(

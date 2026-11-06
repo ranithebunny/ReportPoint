@@ -1,3 +1,35 @@
+/* Administrator accounts skeleton loading */
+function showAdminsSkeleton() {
+  const rows = document.getElementById('rows');
+
+  rows.innerHTML = Array.from({ length: 5 }, () => `
+    <tr aria-hidden="true">
+      <td data-label="Name">
+        <div class="skeleton skeleton-title" style="width:75%; margin-bottom:.5rem;"></div>
+        <div class="skeleton skeleton-meta" style="width:60%;"></div>
+      </td>
+      <td data-label="Username">
+        <div class="skeleton skeleton-meta" style="width:75%;"></div>
+      </td>
+      <td data-label="Access">
+        <div class="skeleton skeleton-meta" style="width:85%;"></div>
+      </td>
+      <td data-label="Status">
+        <div class="skeleton skeleton-meta" style="width:60%;"></div>
+      </td>
+      <td data-label="Created">
+        <div class="skeleton skeleton-meta" style="width:70%;"></div>
+      </td>
+      <td data-label="Actions">
+        <div class="skeleton skeleton-meta" style="width:90%;"></div>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('main').setAttribute('aria-busy', 'true');
+}
+
+showAdminsSkeleton();
 /* Administrator accounts: create, edit access, deactivate */
 (async function () {
   const me = await UI.init({ page: 'admins', perm: 'manage_admins' });
@@ -14,11 +46,9 @@ let currentAdmins = [];
 
   
   async function render() {
-    $('rows').innerHTML = `
-      <tr><td colspan="6">Loading administrator accounts...</td></tr>
-    `;
+  $('main').setAttribute('aria-busy', 'true');
 
-    try {
+  try {
       const response = await fetch('../api/admins-list.php', {
         method: 'GET',
         credentials: 'same-origin',
@@ -63,14 +93,28 @@ currentAdmins = admins;
       `).join('');
 
       if (admins.length === 0) {
-        $('rows').innerHTML = '<tr><td colspan="6">No administrator accounts found.</td></tr>';
-      }
-    } catch (error) {
+  $('rows').innerHTML = `
+    <tr>
+      <td colspan="6">No administrator accounts found.</td>
+    </tr>
+  `;
+}
+
+$('main').setAttribute('aria-busy', 'false');
+        } catch (error) {
       console.error('Loading administrators failed:', error);
+
+      $('main').setAttribute('aria-busy', 'false');
+
       $('rows').innerHTML = `
-        <tr><td colspan="6">${UI.esc(error.message)}</td></tr>
+        <tr>
+          <td colspan="6">
+            ${UI.esc(error.message || 'Could not load administrator accounts.')}
+          </td>
+        </tr>
       `;
-      UI.toast(error.message, 'error');
+
+      UI.toast(error.message || 'Could not load administrator accounts.', 'error');
     }
   }
 

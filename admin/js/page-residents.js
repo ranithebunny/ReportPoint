@@ -1,3 +1,47 @@
+function showResidentsSkeleton() {
+  const el = (id) => document.getElementById(id);
+
+  el('count').textContent = 'Loading resident accounts...';
+
+  el('table-wrap').hidden = false;
+  el('empty').hidden = true;
+
+  el('rows').innerHTML = Array.from({ length: 5 }, () => `
+    <tr aria-hidden="true">
+      <td data-label="Full name">
+        <div class="skeleton skeleton-title" style="width:80%"></div>
+      </td>
+
+      <td data-label="Unit">
+        <div class="skeleton skeleton-meta" style="width:55%"></div>
+      </td>
+
+      <td data-label="Resident ID">
+        <div class="skeleton skeleton-meta" style="width:75%"></div>
+      </td>
+
+      <td data-label="Password status">
+        <div class="skeleton skeleton-meta" style="width:85%"></div>
+      </td>
+
+      <td data-label="Status">
+        <div class="skeleton skeleton-meta" style="width:55%"></div>
+      </td>
+
+      <td data-label="Created">
+        <div class="skeleton skeleton-meta" style="width:70%"></div>
+      </td>
+
+      <td data-label="Actions">
+        <div class="skeleton skeleton-meta" style="width:90%"></div>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('main').setAttribute('aria-busy', 'true');
+}
+
+showResidentsSkeleton();
 /* Resident accounts list: search, filter, create, edit, reset password, (de)activate */
 (async function () {
   const admin = await UI.init({ page: 'residents', perm: 'manage_residents' });
@@ -23,9 +67,29 @@ async function loadResidents() {
 
     allResidents = result.residents;
     render();
+
+    // Loading complete
+    document.getElementById('main').setAttribute('aria-busy', 'false');
+
   } catch (error) {
     console.error('Could not load residents:', error);
-    $('count').textContent = 'Could not load residents. Please refresh the page.';
+
+    document.getElementById('main').setAttribute('aria-busy', 'false');
+
+    $('count').textContent = 'Could not load residents.';
+    $('table-wrap').hidden = true;
+    $('empty').hidden = false;
+
+    $('empty').innerHTML = `
+      <div class="card">
+        ${UI.emptyState(
+          'Residents unavailable',
+          'Could not load resident accounts. Please refresh the page.'
+        )}
+      </div>
+    `;
+
+    UI.toast('Could not load residents.', 'error');
   }
 }
   function render() {

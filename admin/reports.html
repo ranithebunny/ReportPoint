@@ -11,7 +11,33 @@
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-  <div id="app-header"></div>
+  <header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
+      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+      <span class="brand-divider"></span>
+      <span class="brand-name">
+        ReportPoint
+        <span class="admin-badge">ADMIN</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle menu"
+      aria-expanded="false" aria-controls="nav">☰</button>
+
+    <nav class="nav" id="nav" aria-label="Admin">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="reports.html">Reports</a>
+      <a href="residents.html" data-perm="manage_residents">Residents</a>
+      <a href="admins.html" data-perm="manage_admins">Admins</a>
+
+      <span class="nav-user">
+        <span id="nav-admin-name"></span>
+        <button class="nav-link" id="logout-btn">Log out</button>
+      </span>
+    </nav>
+  </div>
+</header>
   <main id="main">
     <div class="page-head">
       <div>

@@ -41,37 +41,62 @@ const UI = (() => {
     { key: 'admins', label: 'Admins', href: 'admins.html', perm: 'manage_admins' }
   ];
 
-  function renderChrome(admin, page) {
-    const links = NAV.filter((n) => !n.perm || RP.can(admin, n.perm))
-      .map((n) => `<a href="${n.href}" ${n.key === page ? 'aria-current="page"' : ''}>${n.label}</a>`).join('');
-    document.getElementById('app-header').outerHTML = `
-      <a class="sr-only" href="#main">Skip to main content</a>
-      <header class="site-header"><div class="header-inner">
-        <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">${LOGO}<span class="brand-divider"></span>
-          <span class="brand-name">ReportPoint<span class="admin-badge">ADMIN</span></span></a>
-        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
-        <nav class="nav" id="nav" aria-label="Admin">${links}
-          <span class="nav-user"><span>${esc(admin.name)}</span><button class="nav-link" id="logout-btn" style="padding:.3rem .5rem;font-size:.8rem">Log out</button></span>
-        </nav>
-      </div></header>`;
-    document.getElementById('app-footer').outerHTML = `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
-    const toggle = document.querySelector('.nav-toggle'), nav = document.getElementById('nav');
-    toggle.addEventListener('click', () => { const o = nav.classList.toggle('open'); toggle.setAttribute('aria-expanded', o); });
-   document.getElementById('logout-btn').addEventListener('click', async () => {
-  const button = document.getElementById('logout-btn');
-  button.disabled = true;
+function renderChrome(admin, page) {
+  // Display admin name
+  document.getElementById('nav-admin-name').textContent = admin.name;
 
-  try {
-    await fetch('../api/logout.php', {
-      method: 'POST',
-      credentials: 'same-origin'
+  // Handle navigation permissions
+  document.querySelectorAll('[data-perm]').forEach((link) => {
+    link.hidden = !RP.can(admin, link.dataset.perm);
+  });
+
+  // Highlight active navigation link
+  document.querySelectorAll('.nav a').forEach((link) => {
+    if (link.getAttribute('href') === `${page}.html`) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+
+  // Render footer
+  document.getElementById('app-footer').outerHTML =
+    `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
+
+  // Hamburger menu toggle
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('nav');
+
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
     });
-  } finally {
-    location.replace('login.html');
   }
-});
-    if (!document.querySelector('.toast-region')) document.body.insertAdjacentHTML('beforeend', '<div class="toast-region" role="status" aria-live="polite"></div>');
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    const button = document.getElementById('logout-btn');
+    button.disabled = true;
+
+    try {
+      await fetch('../api/logout.php', {
+        method: 'POST',
+        credentials: 'same-origin'
+      });
+    } finally {
+      location.replace('login.html');
+    }
+  });
+
+  // Toast region
+  if (!document.querySelector('.toast-region')) {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div class="toast-region" role="status" aria-live="polite"></div>'
+    );
   }
+}
 
   /**
    * Call at the top of every protected page.

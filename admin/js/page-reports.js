@@ -1,4 +1,46 @@
+function showReportsSkeleton() {
+  const el = (id) => document.getElementById(id);
+
+  el('count').textContent = 'Loading reports...';
+
+  // Show table while data is loading
+  el('table-wrap').hidden = false;
+  el('empty').hidden = true;
+
+  // Generate placeholder table rows
+  el('rows').innerHTML = Array.from({ length: 6 }, () => `
+    <tr aria-hidden="true">
+      <td data-label="Report">
+        <div class="skeleton skeleton-title" style="width:75%"></div>
+        <div class="skeleton skeleton-meta" style="width:55%"></div>
+      </td>
+      <td data-label="Resident">
+        <div class="skeleton skeleton-title" style="width:80%"></div>
+        <div class="skeleton skeleton-meta" style="width:45%"></div>
+      </td>
+      <td data-label="Category">
+        <div class="skeleton skeleton-meta" style="width:85%"></div>
+      </td>
+      <td data-label="Priority">
+        <div class="skeleton skeleton-meta" style="width:55%"></div>
+      </td>
+      <td data-label="Status">
+        <div class="skeleton skeleton-meta" style="width:70%"></div>
+      </td>
+      <td data-label="Tags">
+        <div class="skeleton skeleton-meta" style="width:60%"></div>
+      </td>
+      <td data-label="Submitted">
+        <div class="skeleton skeleton-meta" style="width:75%"></div>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('main').setAttribute('aria-busy', 'true');
+}
 /* Reports list page: search + filters + sort (all client-side for now; PHP will filter with SQL later) */
+showReportsSkeleton();
+
 (async function () {
   const admin = await UI.init({ page: 'reports' });
   if (!admin) return;
@@ -21,7 +63,23 @@ try {
   all = result.reports;
 } catch (error) {
   console.error('Could not load reports:', error);
-  document.getElementById('count').textContent = 'Could not load reports. Please refresh the page.';
+
+  document.getElementById('main').setAttribute('aria-busy', 'false');
+
+  el('count').textContent = 'Could not load reports.';
+  el('table-wrap').hidden = true;
+  el('empty').hidden = false;
+
+  el('empty').innerHTML = `
+    <div class="card">
+      ${UI.emptyState(
+        'Reports unavailable',
+        'Could not load reports. Please refresh the page.'
+      )}
+    </div>
+  `;
+
+  UI.toast('Could not load reports.', 'error');
   return;
 }
   const ANY = '';
@@ -71,5 +129,7 @@ try {
 
   ['f-q', 'f-status', 'f-priority', 'f-category', 'f-tag', 'f-sort'].forEach((id) => el(id).addEventListener('input', render));
   el('f-clear').addEventListener('click', () => { ['f-q', 'f-status', 'f-priority', 'f-category', 'f-tag'].forEach((id) => (el(id).value = ANY)); el('f-sort').value = 'new'; render(); });
-  render();
+render();
+
+document.getElementById('main').setAttribute('aria-busy', 'false');
 })();
