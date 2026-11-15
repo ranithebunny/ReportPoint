@@ -5,32 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ReportPoint · index</title>
   <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
-  <link rel="stylesheet" href="css/theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/theme.css"> 
 </head>
 <body>
   <!-- TODO (Vinnie): index page -->
-   <header class="navbar">
-      <div class="container-fluid">
-      <a class="navbar-brand>
-        <span class="brand-name fs-4 fw-bold">ReportPoint<span class="brand-period">.</span></span>
-      </a>
-      <button class="navbar-toggler" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="site-navigation">
-        <span class="navbar-toggler-icon""></span>
-      </button>
+    <header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
+      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+      <span class="brand-divider"></span>
+      <span class="brand-name">
+        ReportPoint
+      </span>
+    </a>
 
-      <nav class="collapse navbar-collapse justify-content-md-end" id="site-navigation" aria-label="Main navigation">
-        <div class="navbar-nav align-items-md-center gap-md-5">
-          <a class="btn btn-outline-dark ms-md-2" href="index.html">HOME <span>↗</span></a>
-          <a class="btn btn-outline-dark ms-md-2" href="report.html">REPORT <span>↗</span></a>
-          <a class="btn btn-outline-dark ms-md-2" href="track.html">TRACK <span>↗</span></a>
-          <a class="btn btn-outline-dark ms-md-2" href="faq.html">FAQ <span>↗</span></a>
-          <a class="btn btn-outline-dark ms-md-2" href="login.html">LOGIN <span>↗</span></a>
- </div>
- </div>
- </div>
-      </nav>
-      </div>
-    </header>
+    <button class="nav-toggle" aria-label="Toggle menu"
+      aria-expanded="false" aria-controls="nav">☰</button>
+
+    <nav class="nav" id="nav" aria-label="Admin">
+      <a href="index.html">Home</a>
+      <a href="report.html">Report</a>
+      <a href="track.html">Track</a>
+      <a href="faq.html">FAQ</a>
+
+      <span class="nav-user">
+        <span id="nav-admin-name"></span>
+        <button class="nav-link" id="logout-btn">Log out</button>
+      </span>
+    </nav>
+  </div>
+</header>
    <main>
       <section class="hero-section">
             <div class="hero-content">
