@@ -502,11 +502,19 @@ main {
     align-items: center;
     text-align: center;
     color: #ffffff;
-    padding: 48px 24px;
+    padding: 15px 10px;
+    gap: 10px;
     margin: 0;
     overflow: hidden;
 }
 
+.hero-title {
+  padding-bottom: 20px;
+}
+.hero-description {
+  max-width: 500px;
+  padding-bottom: 30px;
+}
 .hero-bg-carousel {
     position: absolute;
     top: 0;
@@ -574,8 +582,9 @@ main {
 .btn-hero-secondary {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     padding: 15px 17.5px;
+    margin: 20px 10px;
     border-radius: 50px;
     font-size: 12px;
     font-weight: 600;
@@ -633,12 +642,13 @@ main {
 }
 
 .section-eyebrow,
-.category-eyebrow {
+.category-eyebrow,
+.hero-eyebrow {
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #ffffff;
+    color: #CEEDD9;
     margin-bottom: 8px;
 }
 
