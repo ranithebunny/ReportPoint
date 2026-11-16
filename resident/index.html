@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/theme.css"> 
+
 </head>
 <body>
   <!-- TODO (Vinnie): index page -->
@@ -39,92 +40,104 @@
     </nav>
   </div>
 </header>
-   <main>
-      <section class="hero-section">
-            <div class="hero-content">
-              <p class="hero-eyebrow"><span class="eyebrow-dot"></span> Resident Concerns Desk</p>
-              <h1 class="hero-title" id="hero-title">Your Point. Your Report<br><span></span></h1>
-              <p class="hero-description">See something that needs fixing at College Point? Report it in under two minutes — from your unit, your phone, no account hassle — and watch the administrators handle it.</p>
-              <a class="btn-primary" href="report.html">Report an Issue <span>↗</span></a>
-              <a class="btn-secondary" href="track.html">Track an Issue<span>↗</span></a>
-            </div>
-        </section>
+<main>
+<section class="hero-section">
+  <div class="hero-bg-carousel">
+    <div class="hero-slide slide-1"></div>
+    <div class="hero-slide slide-2"></div>
+    <div class="hero-slide slide-3"></div>
+  </div>
+  <div class="hero-overlay"></div>
 
-        <section class="category-section">
-          <div class="category-content">
-              <p class="category-eyebrow"><span class="eyebrow-dot"></span>What can you report.</p>
-              <h1 class="category-title" id="category-title">Four kinds of concerns<br><span></span></h1>
-              <container> 
-                <row>
-                  <column class="category">
-                    <h3>Building & Structural</h3>
-                    <p>Broken elevators, damaged doors, faulty facilities.</p>
-                  </column>
-                  <column class="category">
-                    <h3>Utilities & Maintenance</h3>
-                    <p>Water leaks, power outages, Wi-Fi issues, broken lights.</p>
-                  </column>
-                  <column class="category">
-                    <h3>Sanitation & Environment</h3>
-                    <p>Litter, pest infestations, foul odors.</p>
-                 </column>
-                  <column class="category">
-                    <h3>Safety, Peace & Order</h3>
-                    <p>Noise complaints, security concerns, unauthorized access.</p>
-                  </column>
-                </row>
-              </container>
-            </div>
-        </section>
+  <div class="hero-content">
+    <p class="hero-eyebrow"><span class="eyebrow-dot"></span> Resident Concerns Desk</p>
+    <h1 class="hero-title" id="hero-title">Your Point. Your Report.</h1>
+    <p class="hero-description">See something that needs fixing at College Point? Report it in under two minutes &mdash; from your unit, your phone, no account hassle &mdash; and watch the administrators handle it.</p>
+    <div class="hero-buttons">
+      <a class="btn-hero-primary" href="report.html">Report an Issue <span>&rarr;</span></a>
+      <a class="btn-hero-secondary" href="track.html">Track a Report <span>&rarr;</span></a>
+    </div>
+  </div>
+  <div class="hero-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</section>
+<section class="category-section">
+  <div class="category-content">
+    <p class="category-eyebrow">
+      <span class="eyebrow-dot"></span>What can you report
+    </p>
+    <h1 class="category-title" id="category-title">
+      Four kinds of concerns
+    </h1>
+    <div class="concern-grid">
+      <div class="category">
+        <div class="category-icon">🏢</div>
+        <h3>Building & Structural</h3>
+        <p>Broken elevators, damaged doors, faulty facilities.</p>
+      </div>
+      <div class="category">
+        <div class="category-icon">💡</div>
+        <h3>Utilities & Maintenance</h3>
+        <p>Water leaks, power outages, Wi-Fi issues, broken lights.</p>
+      </div>
+      <div class="category">
+        <div class="category-icon">🧹</div>
+        <h3>Sanitation & Environment</h3>
+        <p>Litter, pest infestations, foul odors.</p>
+      </div>
+      <div class="category">
+        <div class="category-icon">🛡️</div>
+        <h3>Safety, Peace & Order</h3>
+        <p>Noise complaints, security concerns, unauthorized access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="how-it-works-section">
+  <div class="section-content">
+    <p class="section-eyebrow">HOW IT WORKS</p>
+    <h2 class="section-title">Report. Review. Resolved.</h2>
+    <div class="steps-grid">
+      <div class="step-item">
+        <span class="step-number">01</span>
+        <h3>Tell us what's wrong</h3>
+        <p>Pick a category, add your unit, describe the issue, attach a photo.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-number">02</span>
+        <h3>Get a reference number</h3>
+        <p>Your report is validated and logged instantly with a unique ID.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-number">03</span>
+        <h3>Follow the progress</h3>
+        <p>From Received to Resolved &mdash; see every status change.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <section>
-          <div class="tutorial-content">
-              <p class="tutorial-eyebrow"><span class="eyebrow-dot"></span>How it works</p>
-              <h1 class="tutorial-title" id="tutorial-title">Report. Review. Resolved.<br><span></span></h1>
-              <container> 
-                <row>
-                  <column class="tutorial">
-                    <h3>01</h3>
-                    <h4>Tell us what's wrong</h4>
-                    <p>Pick a category, add your unit, describe the issue, attach a photo.</p>
-                  </column>
-                  <column class="tutorial">
-                    <h3>02</h3>
-                    <h4>Get a reference number</h4>
-                    <p>Your report is validated and logged instantly with a unique ID.</p>
-                  </column>
-                  <column class="tutorial">
-                    <h3>03</h3>
-                    <h4>Follow the progress</h4>
-                    <p>From Received to Resolved — see every status change.</p>
-                 </column>
-                </row>
-              </container>
-          </div>
-        </section>
-
-        <section>
-          <div class="statistics-content">
-              <p class="statistics-eyebrow"><span class="eyebrow-dot"></span>How it works</p>
-              <h1 class="statistics-title" id="statistics-title">Report. Review. Resolved.<br><span></span></h1>
-              <container> 
-                <row>
-                  <column class="statistics">
-                    <h3> < 2min</h3>
-                    <p>average time to file a report</p>
-                  </column>
-                  <column class="statistics">
-                    <h3>4</h3>
-                    <p>report categories</p>
-                  </column>
-                  <column class="statistics">
-                    <h3>24/7</h3>
-                    <p>submission, any device</p>
-                 </column>
-                </row>
-              </container>
-          </div>
-        </section>
+<section class="statistics-section">
+  <div class="section-content">
+    <div class="statistics-grid">
+      <div class="statistics-item">
+        <h3> < 2min</h3>
+        <p>average time to file a report</p>
+      </div>
+      <div class="statistics-item">
+        <h3>4</h3>
+        <p>report categories</p>
+      </div>
+      <div class="statistics-item">
+        <h3>24/7</h3>
+        <p>submission, any device</p>
+      </div>
+    </div>
+  </div>
+</section>
         <section>
           <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | Accessibility · Privacy Policy</p>
         </section>
