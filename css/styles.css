@@ -478,6 +478,7 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 
+/* ---------- INDEX ---------- */
 
 html, body {
     margin: 0;
