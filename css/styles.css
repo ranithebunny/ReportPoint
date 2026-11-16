@@ -491,13 +491,6 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
     }
 }
 
-.tutorial-section {
-    width: 100%;
-}
-
-.tutorial-content {
-    width: 100%;
-}
 
 .tutorial-section .row {
     display: grid !important;

@@ -5,9 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ReportPoint · report</title>
   <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
-  <link rel="stylesheet" href="css/theme.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/theme.css"> 
 </head>
 <body>
   <!-- TODO (Vinnie): report page -->
+       <header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
+      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+      <span class="brand-divider"></span>
+      <span class="brand-name">
+        ReportPoint
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle menu"
+      aria-expanded="false" aria-controls="nav">☰</button>
+
+    <nav class="nav" id="nav" aria-label="Admin">
+      <a href="index.html">Home</a>
+      <a href="report.html">Report</a>
+      <a href="track.html">Track</a>
+      <a href="faq.html">FAQ</a>
+
+      <span class="nav-user">
+        <button class="nav-link" id="logout-btn">Log out</button>
+      </span>
+    </nav>
+  </div>
+
 </body>
 </html>
