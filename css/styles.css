@@ -641,9 +641,7 @@ main {
     margin: 0 auto;
 }
 
-.section-eyebrow,
-.category-eyebrow,
-.hero-eyebrow {
+.eyebrow {
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -1042,3 +1040,4 @@ textarea {
     gap: 0;
   }
 }
+
