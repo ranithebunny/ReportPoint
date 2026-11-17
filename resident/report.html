@@ -28,7 +28,7 @@
 
     <nav class="nav" id="nav" aria-label="Admin">
       <a href="index.html">Home</a>
-      <a href="report.html">Report</a>
+      <a href="report.html" class="nav-link active">Report</a>
       <a href="track.html">Track</a>
       <a href="faq.html">FAQ</a>
 
@@ -60,7 +60,7 @@
             <div class="two-col-row">
               <div class="form-group">
                 <label for="unitNumber">Unit Number <span class="required">*</span></label>
-                <input type="text" id="unitNumber" name="unitNumber" placeholder="e.g. 1208" required>
+                <input type="text" id="unitNumber" name="unitNumber" placeholder="e.g. 1208" pattern="[0-9]{3,4}" required>
               </div>
               <div class="form-group">
                 <label for="contactNumber">Contact Number <span class="optional">(optional)</span></label>
@@ -90,17 +90,8 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="title">Title <span class="required">*</span></label>
-              <div class="select-wrapper">
-                <select id="title" name="title" required>
-                  <option value="" disabled selected>e.g. Leaking Bathroom Pipe</option>
-                  <option value="leaking-pipe">Leaking Bathroom Pipe</option>
-                  <option value="broken-light">Flickering / Broken Light</option>
-                  <option value="clogged-drain">Clogged Drain</option>
-                  <option value="door-lock">Faulty Door Lock</option>
-                </select>
-              </div>
-            </div>
+              <label for="report-title">Title <span class="required">*</span></label>
+              <input type="text" id="report-title" name="report-title" placeholder="e.g., faulty door lock, leaking pipes, clogged drain, broken light" required />
             <div class="form-group">
               <label for="description">Describe the Problem <span class="required">*</span></label>
               <textarea id="description" name="description" rows="5" maxlength="500" placeholder="0/500 characters...." required></textarea>
