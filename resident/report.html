@@ -9,5 +9,165 @@
 </head>
 <body>
   <!-- TODO (Vinnie): report page -->
+<<<<<<< Updated upstream
+=======
+       <header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
+      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+      <span class="brand-divider"></span>
+      <span class="brand-name">
+        ReportPoint
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle menu"
+      aria-expanded="false" aria-controls="nav">☰</button>
+
+    <nav class="nav" id="nav" aria-label="Admin">
+      <a href="index.html">Home</a>
+      <a href="report.html">Report</a>
+      <a href="track.html">Track</a>
+      <a href="faq.html">FAQ</a>
+
+      <span class="nav-user">
+        <button class="nav-link" id="logout-btn">Log out</button>
+      </span>
+    </nav>
+  </div>
+  <div class="report-header">
+    <p class="eyebrow">Report an Issue </p>
+    <h1 class="report-title">Tell us what needs attention</h1>
+    <p class="report-description">Fields marked <span class="asterisk">*</span> are required. Photos help the admin team act faster.</p>
+  </div>
+  <main class="content-grid">
+      <section class="form-card">
+        <form action="#" method="POST" enctype="multipart/form-data">
+          <div class="form-section">
+            <h2 class="section-banner">Personal Information</h2>
+            
+            <div class="two-col-row">
+              <div class="form-group">
+                <label for="fullName">Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" name="fullName" placeholder="Juan Dela Cruz" required>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" id="email" name="email" placeholder="juan@email.com" required>
+              </div>
+            </div>
+
+            <div class="two-col-row">
+              <div class="form-group">
+                <label for="unitNumber">Unit Number <span class="required">*</span></label>
+                <input type="text" id="unitNumber" name="unitNumber" placeholder="e.g. 1208" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactNumber">Contact Number <span class="optional">(optional)</span></label>
+                <input type="tel" id="contactNumber" name="contactNumber" placeholder="09XX XXX XXXX"
+                pattern="09[0-9]{9}">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-banner">Report Details</h2>
+
+            <div class="form-group">
+              <label for="incidentLocation">Incident Location <span class="required">*</span></label>
+              <input type="text" id="incidentLocation" name="incidentLocation" placeholder="e.g., Main Lobby, 2nd Floor Restroom, Unit 1208" required />
+            </div>
+
+            <div class="form-group">
+              <label for="category">Category <span class="required">*</span></label>
+              <div class="select-wrapper">
+                <select id="category" name="category" required>
+                  <option value="" disabled selected>Select a Category...</option>
+                  <option value="plumbing">Plumbing &amp; Water</option>
+                  <option value="electrical">Electrical &amp; Lighting</option>
+                  <option value="hvac">Air Conditioning / Ventilation</option>
+                  <option value="security">Security &amp; Access</option>
+                  <option value="cleanliness">Cleanliness &amp; Sanitation</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="title">Title <span class="required">*</span></label>
+              <div class="select-wrapper">
+                <select id="title" name="title" required>
+                  <option value="" disabled selected>e.g. Leaking Bathroom Pipe</option>
+                  <option value="leaking-pipe">Leaking Bathroom Pipe</option>
+                  <option value="broken-light">Flickering / Broken Light</option>
+                  <option value="clogged-drain">Clogged Drain</option>
+                  <option value="door-lock">Faulty Door Lock</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Describe the Problem <span class="required">*</span></label>
+              <textarea id="description" name="description" rows="5" maxlength="500" placeholder="0/500 characters...." required></textarea>
+            </div>
+
+            <div class="two-col-row align-start">
+              <div class="form-group">
+                <label for="dateObserved">Date and Time Observed <span class="required">*</span></label>
+                <input type="datetime-local" id="dateObserved" name="dateObserved" required />
+              </div>
+
+              <div class="form-group">
+                <label>Severity <span class="required">*</span></label>
+                <div class="severity-options">
+                  <label class="severity-pill">
+                    <input type="radio" name="severity" value="low" checked />
+                    <span>Low</span>
+                  </label>
+                  <label class="severity-pill">
+                    <input type="radio" name="severity" value="medium" />
+                    <span>Medium</span>
+                  </label>
+                  <label class="severity-pill">
+                    <input type="radio" name="severity" value="high" />
+                    <span>High</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="evidence">Upload evidence <span class="required">*</span></label>
+              <div class="upload-box">
+                <input type="file" id="evidence" name="evidence" accept=".jpg,.jpeg,.png,.mp4,.mov" required />
+                <p class="upload-hint">JPG, PNG, MP4, MOV (max 25 mb)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="consent-row">
+            <input type="checkbox" id="consent" name="consent" checked required />
+            <label for="consent">
+              I consent to CollegePoint administrators collecting and using this information to process my report. Read our <a href="#">Privacy Policy</a> for more information.
+            </label>
+          </div>
+
+          <button type="submit" class="submit-btn">SUBMIT REPORT</button>
+        </form>
+      </section>
+
+      <aside class="sidebar-card">
+        <h3>Before you submit</h3>
+        <ul>
+          <li>Include the exact location.</li>
+          <li>A clear photo speeds up the fix.</li>
+          <li>Emergency? Call the front desk first.</li>
+        </ul>
+      </aside>
+    </main>
+  </div>
+>>>>>>> Stashed changes
 </body>
 </html>
