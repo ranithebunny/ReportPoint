@@ -766,6 +766,9 @@ main {
   color: var(--danger);
   font-weight: 600;
 }
+.report-header {
+  padding: 50px;
+}
 
 .optional {
   color: var(--text-faint);
@@ -778,6 +781,7 @@ main {
   grid-template-columns: 1fr 320px;
   gap: 24px;
   align-items: start;
+  max-width: 1500px;
 }
 
 .form-card, .sidebar-card {
@@ -786,6 +790,8 @@ main {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 40px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .form-section {
@@ -1022,7 +1028,7 @@ textarea {
 
 .sidebar-card ul {
   padding-left: 18px;
-  font-size: 13px;
+  font-size: 16px;
   color: var(--text-muted);
 }
 
@@ -1040,4 +1046,3 @@ textarea {
     gap: 0;
   }
 }
-
