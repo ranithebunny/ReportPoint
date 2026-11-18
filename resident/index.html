@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ReportPoint · index</title>
-  <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
@@ -13,29 +12,29 @@
 
 </head>
 <body>
-    <header class="site-header">
+  <header class="site-header">
   <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
+    <a class="brand" href="index.html" aria-label="ReportPoint home">
       <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
       <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-      </span>
+      <span class="brand-name">ReportPoint</span>
     </a>
 
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
 
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="index.html">Home</a>
-      <a href="report.html">Report</a>
-      <a href="track.html">Track</a>
-      <a href="faq.html">FAQ</a>
-
-      <span class="nav-user">
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
+    <div class="header-right">
+      <div class="header-contacts">
+        <span>Globe: +63 954 488 7599</span>
+        <span>Smart: +63 962 626 7420</span>
+      </div>
+      <nav class="nav" id="nav" aria-label="Resident">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="report.html">Report</a>
+        <a href="track.html">Track</a>
+        <a href="faq.html">FAQ</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
   </div>
 </header>
 <main class="index-main">
@@ -135,7 +134,11 @@
   </div>
 </section>
 </body>
+</main>
 <footer class="site-footer">
-  © 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila
+  © 2026 ReportPoint · Group SoHo · for College Point Manila residents &nbsp;|&nbsp;
+  <a href="faq.html#accessibility">Accessibility</a> &nbsp;
+  <a href="faq.html#privacy">Privacy Policy</a>
 </footer>
+</body>
 </html>
