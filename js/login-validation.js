@@ -94,7 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showAlert(result.error || 'Unable to sign in. Please try again.');
         return;
       }
-
+      if (isResident && result.resident && result.resident.name) {
+        sessionStorage.setItem('rp_resident_nav', result.resident.name);
+      }
+      if (!isResident && result.admin && result.admin.name) {
+  sessionStorage.setItem('rp_admin_nav', result.admin.name);
+}
       location.replace(
         isResident ? '../resident/index.html' : 'dashboard.html'
       );

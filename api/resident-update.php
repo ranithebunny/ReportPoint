@@ -29,7 +29,7 @@ try {
          FROM admins a
          JOIN admin_permissions ap ON ap.admin_id = a.admin_id
          WHERE a.admin_id = ?
-           AND a.is_active = 1
+           AND a.is_active = TRUE
            AND ap.permission = 'manage_residents'
          LIMIT 1"
     );

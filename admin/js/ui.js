@@ -33,78 +33,108 @@ const UI = (() => {
   const emptyState = (title, text) => `<div class="empty"><strong>${esc(title)}</strong>${esc(text)}</div>`;
 
   /* ---------- Header / footer / guard ---------- */
-  const LOGO = `<img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">`;
-  const NAV = [
-    { key: 'dashboard', label: 'Dashboard', href: 'dashboard.html' },
-    { key: 'reports', label: 'Reports', href: 'reports.html' },
-    { key: 'residents', label: 'Residents', href: 'residents.html', perm: 'manage_residents' },
-    { key: 'admins', label: 'Admins', href: 'admins.html', perm: 'manage_admins' }
-  ];
+  const ADMIN_CACHE_KEY = 'rp_admin_nav';
 
-function renderChrome(admin, page) {
-  // Display admin name
-  document.getElementById('nav-admin-name').textContent = admin.name;
-
-  // Handle navigation permissions
-  document.querySelectorAll('[data-perm]').forEach((link) => {
-    link.hidden = !RP.can(admin, link.dataset.perm);
-  });
-
-  // Highlight active navigation link
-  document.querySelectorAll('.nav a').forEach((link) => {
-    if (link.getAttribute('href') === `${page}.html`) {
-      link.setAttribute('aria-current', 'page');
-    } else {
-      link.removeAttribute('aria-current');
-    }
-  });
-
-  // Render footer
-  document.getElementById('app-footer').outerHTML =
-    `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
-
-  // Hamburger menu toggle
-  const toggle = document.querySelector('.nav-toggle');
-  const nav = document.getElementById('nav');
-
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
-      const isOpen = nav.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', isOpen);
+  function applyCachedAdminChrome(page) {
+    // Highlight active navigation link immediately
+    document.querySelectorAll('.nav a').forEach((link) => {
+      if (link.getAttribute('href') === `${page}.html`) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
     });
-  }
-
-  // Logout
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    const button = document.getElementById('logout-btn');
-    button.disabled = true;
 
     try {
-      await fetch('../api/logout.php', {
-        method: 'POST',
-        credentials: 'same-origin'
-      });
-    } finally {
-      location.replace('login.html');
-    }
-  });
+      const raw = sessionStorage.getItem(ADMIN_CACHE_KEY);
+      if (!raw) return;
+      const cached = JSON.parse(raw);
 
-  // Toast region
-  if (!document.querySelector('.toast-region')) {
-    document.body.insertAdjacentHTML(
-      'beforeend',
-      '<div class="toast-region" role="status" aria-live="polite"></div>'
-    );
+      const nameEl = document.getElementById('nav-admin-name');
+      if (nameEl && cached.name) {
+        nameEl.textContent = cached.name;
+      }
+
+      if (Array.isArray(cached.permissions)) {
+        document.querySelectorAll('[data-perm]').forEach((link) => {
+          link.hidden = !cached.permissions.includes(link.dataset.perm);
+        });
+      }
+    } catch (e) {
+      // Ignore malformed cache
+    }
   }
-}
+
+  function renderChrome(admin, page) {
+    // Display admin name
+    document.getElementById('nav-admin-name').textContent = admin.name;
+
+    // Handle navigation permissions
+    document.querySelectorAll('[data-perm]').forEach((link) => {
+      link.hidden = !RP.can(admin, link.dataset.perm);
+    });
+
+    // Highlight active navigation link
+    document.querySelectorAll('.nav a').forEach((link) => {
+      if (link.getAttribute('href') === `${page}.html`) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+
+    // Render footer
+    const footerEl = document.getElementById('app-footer');
+    if (footerEl) {
+      footerEl.outerHTML =
+        `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
+    }
+
+    // Hamburger menu toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.getElementById('nav');
+
+    if (toggle && nav) {
+      toggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', isOpen);
+      });
+    }
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      const button = document.getElementById('logout-btn');
+      button.disabled = true;
+      sessionStorage.removeItem(ADMIN_CACHE_KEY);
+
+      try {
+        await fetch('../api/logout.php', {
+          method: 'POST',
+          credentials: 'same-origin'
+        });
+      } finally {
+        location.replace('login.html');
+      }
+    });
+
+    // Toast region
+    if (!document.querySelector('.toast-region')) {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div class="toast-region" role="status" aria-live="polite"></div>'
+      );
+    }
+  }
 
   /**
    * Call at the top of every protected page.
    * Redirects to login if not signed in; shows "no access" if the admin lacks `perm`.
    * Returns the signed-in admin, or null if the page should stop.
    */
-
   async function init({ page, perm }) {
+    // Paint cached admin name, permissions, and active underline BEFORE awaiting session.php
+    applyCachedAdminChrome(page);
+
     let response;
     let result;
 
@@ -116,16 +146,22 @@ function renderChrome(admin, page) {
 
       result = await response.json();
     } catch (error) {
+      sessionStorage.removeItem(ADMIN_CACHE_KEY);
       location.replace('login.html');
       return null;
     }
 
     if (!response.ok || !result.authenticated || !result.admin) {
+      sessionStorage.removeItem(ADMIN_CACHE_KEY);
       location.replace('login.html');
       return null;
     }
 
     const admin = result.admin;
+    sessionStorage.setItem(
+      ADMIN_CACHE_KEY,
+      JSON.stringify({ name: admin.name, permissions: admin.permissions || [] })
+    );
     renderChrome(admin, page);
 
     if (perm && !admin.permissions.includes(perm)) {
@@ -139,7 +175,6 @@ function renderChrome(admin, page) {
 
     return admin;
   }
-
 
   /* ---------- Toasts ---------- */
   function toast(message, type = 'success') {
@@ -223,11 +258,13 @@ function renderChrome(admin, page) {
       else if (h.from) change = `<div class="tl-change"><s>${esc(h.from)}</s></div>`;
       const reason = h.reason ? `<div class="tl-change">Reason: <strong>${esc(h.reason)}</strong></div>` : '';
       const needed = h.infoNeeded ? `<div class="tl-change">Information needed: <strong>${esc(h.infoNeeded)}</strong></div>` : '';
-      const vis = h.visibility === 'public' ? '<span class="vis-badge public">Resident can see</span>' : h.visibility === 'private' ? '<span class="vis-badge private">Admins only</span>' : '';
-      const dotCls = h.visibility === 'private' ? 'internal' : h.type === 'rejected' ? 'alert' : '';
+      const visibility = h.visibility || (h.residentVisible === true ? 'public' : h.residentVisible === false ? 'private' : '');
+      const vis = visibility === 'public' ? '<span class="vis-badge public">Resident can see</span>' : visibility === 'private' ? '<span class="vis-badge private">Admins only</span>' : '';
+      const dotCls = visibility === 'private' ? 'internal' : h.type === 'rejected' ? 'alert' : '';
+      const actor = h.actor || h.by || 'System';
       return `<li><span class="dot ${dotCls}"></span>
         <div class="tl-head"><span class="tl-title">${esc(title)}${vis}</span><time datetime="${esc(h.at)}">${fmtDateTime(h.at)}</time></div>
-        <div class="tl-meta">by ${esc(h.actor)}</div>${change}${reason}${needed}
+        <div class="tl-meta">by ${esc(actor)}</div>${change}${reason}${needed}
         ${h.message && h.type !== 'submitted' ? `<div class="tl-msg">${esc(h.message)}</div>` : ''}</li>`;
     }).join('');
     return `<ol class="timeline">${items}</ol>`;
