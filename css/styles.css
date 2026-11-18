@@ -516,7 +516,7 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 main.index-main {
@@ -533,7 +533,7 @@ main.index-main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center; /* centers the heading, eyebrow, and paragraph */
+  text-align: center;
   color: #ffffff;
   padding: 2rem 1.5rem;
   margin: 0;
@@ -600,7 +600,7 @@ main.index-main {
   position: relative;
   z-index: 3;
   width: 100%;
-  max-width: 720px; 
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -610,7 +610,7 @@ main.index-main {
 
 .hero-description {
   max-width: 540px;
-  margin: 0 auto; 
+  margin: 0 auto;
   padding-bottom: 28px;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.92);
@@ -619,7 +619,7 @@ main.index-main {
 .hero-buttons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; 
+  justify-content: center;
   gap: 16px;
 }
 
@@ -683,7 +683,7 @@ main.index-main {
 
 .category-section {
   background-color: #425348;
-  padding: 50px 10px;
+  padding: 50px 24px;
   width: 100%;
 }
 
@@ -826,7 +826,7 @@ main.index-main {
 .statistics-item {
   display: flex;
   flex-direction: column;
-  text-align: left;
+  text-align: center;
 }
 
 .statistics-item h3 {
@@ -845,24 +845,8 @@ main.index-main {
   margin: 0;
 }
 
-@media (max-width: 860px) {
-  .header-contacts {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .steps-grid,
-  .statistics-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-}
-
-@media (max-width: 576px) {
-  .concern-grid {
-    grid-template-columns: 1fr;
-  }
+.footer-contacts {
+  display: none;
 }
 
 /* ---------- REPORT PAGE ---------- */
@@ -1193,7 +1177,12 @@ main.report-page {
   margin-bottom: 0;
 }
 
+/* ---------- RESIDENT RESPONSIVE (INDEX & REPORT) ---------- */
 @media (max-width: 900px) {
+  .concern-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .content-grid {
     grid-template-columns: 1fr;
   }
@@ -1205,5 +1194,130 @@ main.report-page {
 
   .form-card {
     padding: 1.5rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .header-contacts {
+    display: none;
+  }
+
+  .header-right {
+    display: contents; /* lets .nav position directly inside .site-header without taking flex space */
+  }
+
+  .brand-mark {
+    height: 40px;
+  }
+
+  .brand-divider {
+    height: 28px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.15rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+
+@media (max-width: 768px) {
+  .concern-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .steps-grid,
+  .statistics-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .category-section {
+    padding: 48px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .how-it-works-section,
+  .statistics-section {
+    padding: 56px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    min-height: 76vh;
+    padding: 3rem 1.25rem 3.5rem;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+    max-width: 11ch;
+    margin: 0 auto;
+    line-height: 1.15;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    max-width: 34ch;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 245px;
+    justify-content: center;
+    padding: 13px 20px;
+  }
+
+  .section-title,
+  .category-title {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+
+  .category {
+    min-height: auto;
+    padding: 22px 20px;
+  }
+
+  main.report-page {
+    padding: 1.75rem 1rem 3rem;
+  }
+
+  .form-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .upload-box {
+    padding: 24px 12px;
+  }
+
+  .upload-box input[type="file"] {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .site-footer {
+    padding: 1.25rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
   }
 }
