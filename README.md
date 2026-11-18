@@ -5,7 +5,7 @@ This guide explains how to collaborate on **ReportPoint** using Git and GitHub. 
 ## Current Project Status
 
 - **Admin Dashboard:** Functional and accessible through the live website.
-- **Resident Interface:** Under development. Resident login and password change functionality have been implemented, while the resident dashboard and other resident-facing features are still pending.
+- **Resident Interface:** Under development. 
 - **Deployment:** The project is hosted on Render, with Supabase PostgreSQL used for the database.
 
 ### Test Credentials
