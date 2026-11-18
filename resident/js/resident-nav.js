@@ -4,10 +4,9 @@
   function renderUserNav(nav, fullName) {
     if (!nav || !fullName) return;
 
-    // Update existing user span if already rendered
-    const existingSpan = nav.querySelector('.nav-user span');
-    if (existingSpan) {
-      existingSpan.textContent = fullName;
+    const existingName = nav.querySelector('.nav-user-name');
+    if (existingName) {
+      existingName.textContent = fullName;
       return;
     }
 
@@ -17,14 +16,70 @@
     const userBox = document.createElement('div');
     userBox.className = 'nav-user';
 
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = fullName;
+    const menuWrap = document.createElement('div');
+    menuWrap.className = 'nav-user-menu';
 
-    const logoutBtn = document.createElement('button');
-    logoutBtn.type = 'button';
-    logoutBtn.className = 'nav-link';
-    logoutBtn.textContent = 'Log Out';
-    logoutBtn.addEventListener('click', async () => {
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'nav-user-trigger';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="nav-user-name"></span>
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    `;
+    trigger.querySelector('.nav-user-name').textContent = fullName;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'nav-user-dropdown';
+    dropdown.hidden = true;
+    dropdown.innerHTML = `
+      <a href="change-password.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        Change Password
+      </a>
+      <div class="menu-divider"></div>
+      <button type="button" class="logout-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Log Out
+      </button>
+    `;
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !dropdown.hidden;
+      dropdown.hidden = isOpen;
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menuWrap.contains(e.target)) {
+        dropdown.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdown.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    dropdown.querySelector('.logout-item').addEventListener('click', async () => {
       sessionStorage.removeItem(CACHE_KEY);
       try {
         await fetch('../api/logout.php', {
@@ -36,8 +91,9 @@
       }
     });
 
-    userBox.appendChild(nameSpan);
-    userBox.appendChild(logoutBtn);
+    menuWrap.appendChild(trigger);
+    menuWrap.appendChild(dropdown);
+    userBox.appendChild(menuWrap);
     loginLink.replaceWith(userBox);
   }
 
@@ -56,7 +112,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Mobile hamburger toggle
     const toggle = document.querySelector('.nav-toggle');
     const nav = document.getElementById('nav');
 
@@ -69,13 +124,11 @@
 
     if (!nav) return;
 
-    // 2. Immediately apply cached resident name BEFORE fetch (zero visual jump)
     const cachedName = sessionStorage.getItem(CACHE_KEY);
     if (cachedName) {
       renderUserNav(nav, cachedName);
     }
 
-    // 3. Verify live session in background & sync cache
     try {
       const res = await fetch('../api/resident-session.php', {
         method: 'GET',

@@ -35,6 +35,106 @@ const UI = (() => {
   /* ---------- Header / footer / guard ---------- */
   const ADMIN_CACHE_KEY = 'rp_admin_nav';
 
+  function mountAdminUserDropdown(adminName) {
+    const nameEl = document.getElementById('nav-admin-name');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userContainer = nameEl?.parentElement;
+
+    // If already mounted, just update the displayed name
+    const existingName = document.querySelector('.nav-user-menu .nav-user-name');
+    if (existingName) {
+      if (adminName) existingName.textContent = adminName;
+      return;
+    }
+
+    if (!userContainer || !adminName) return;
+
+    const menuWrap = document.createElement('div');
+    menuWrap.className = 'nav-user-menu';
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'nav-user-trigger';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = `
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="nav-user-name"></span>
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    `;
+    trigger.querySelector('.nav-user-name').textContent = adminName;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'nav-user-dropdown';
+    dropdown.hidden = true;
+    dropdown.innerHTML = `
+      <a href="change-password.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        Change Password
+      </a>
+      <div class="menu-divider"></div>
+      <button type="button" class="logout-item">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Log Out
+      </button>
+    `;
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !dropdown.hidden;
+      dropdown.hidden = isOpen;
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menuWrap.contains(e.target)) {
+        dropdown.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdown.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    dropdown.querySelector('.logout-item').addEventListener('click', async () => {
+      const btn = dropdown.querySelector('.logout-item');
+      btn.disabled = true;
+      sessionStorage.removeItem(ADMIN_CACHE_KEY);
+
+      try {
+        await fetch('../api/logout.php', {
+          method: 'POST',
+          credentials: 'same-origin'
+        });
+      } finally {
+        location.replace('login.html');
+      }
+    });
+
+    menuWrap.appendChild(trigger);
+    menuWrap.appendChild(dropdown);
+
+    if (nameEl) nameEl.remove();
+    if (logoutBtn) logoutBtn.remove();
+    userContainer.appendChild(menuWrap);
+  }
+
   function applyCachedAdminChrome(page) {
     // Highlight active navigation link immediately
     document.querySelectorAll('.nav a').forEach((link) => {
@@ -50,9 +150,8 @@ const UI = (() => {
       if (!raw) return;
       const cached = JSON.parse(raw);
 
-      const nameEl = document.getElementById('nav-admin-name');
-      if (nameEl && cached.name) {
-        nameEl.textContent = cached.name;
+      if (cached.name) {
+        mountAdminUserDropdown(cached.name);
       }
 
       if (Array.isArray(cached.permissions)) {
@@ -65,9 +164,11 @@ const UI = (() => {
     }
   }
 
+  let chromeBound = false;
+
   function renderChrome(admin, page) {
-    // Display admin name
-    document.getElementById('nav-admin-name').textContent = admin.name;
+    // Mount or update admin account dropdown
+    mountAdminUserDropdown(admin.name);
 
     // Handle navigation permissions
     document.querySelectorAll('[data-perm]').forEach((link) => {
@@ -90,32 +191,19 @@ const UI = (() => {
         `<footer class="site-footer">© 2026 ReportPoint · Group SoHo · Admin Console for College Point Manila · <strong>Authorized staff only</strong></footer>`;
     }
 
-    // Hamburger menu toggle
-    const toggle = document.querySelector('.nav-toggle');
-    const nav = document.getElementById('nav');
+    // Hamburger menu toggle (bind once)
+    if (!chromeBound) {
+      chromeBound = true;
+      const toggle = document.querySelector('.nav-toggle');
+      const nav = document.getElementById('nav');
 
-    if (toggle && nav) {
-      toggle.addEventListener('click', () => {
-        const isOpen = nav.classList.toggle('open');
-        toggle.setAttribute('aria-expanded', isOpen);
-      });
-    }
-
-    // Logout
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      const button = document.getElementById('logout-btn');
-      button.disabled = true;
-      sessionStorage.removeItem(ADMIN_CACHE_KEY);
-
-      try {
-        await fetch('../api/logout.php', {
-          method: 'POST',
-          credentials: 'same-origin'
+      if (toggle && nav) {
+        toggle.addEventListener('click', () => {
+          const isOpen = nav.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', isOpen);
         });
-      } finally {
-        location.replace('login.html');
       }
-    });
+    }
 
     // Toast region
     if (!document.querySelector('.toast-region')) {
@@ -132,7 +220,6 @@ const UI = (() => {
    * Returns the signed-in admin, or null if the page should stop.
    */
   async function init({ page, perm }) {
-    // Paint cached admin name, permissions, and active underline BEFORE awaiting session.php
     applyCachedAdminChrome(page);
 
     let response;
@@ -226,7 +313,6 @@ const UI = (() => {
   const TRACK_STEPS = ['Received', 'Under Review', 'In Progress', 'Resolved', 'Closed'];
   const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   function trackerHTML(status) {
-    // "Awaiting Resident Response" pauses at Under Review; "Rejected" ends at Closed.
     const idx = { 'Received': 0, 'Under Review': 1, 'In Progress': 2, 'Awaiting Resident Response': 1, 'Resolved': 3, 'Closed': 4, 'Rejected': 4 }[status];
     const finished = status === 'Closed';
     return `<ol class="tracker" aria-label="Report progress">` + TRACK_STEPS.map((label, i) => {

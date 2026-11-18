@@ -1,116 +1,85 @@
 <?php
-header('Content-Type: application/json');
+declare(strict_types=1);
 
 session_start();
-
 require_once __DIR__ . '/db.php';
 
-function respond($status, $message, $redirect = null) {
+header('Content-Type: application/json; charset=utf-8');
+
+function respond(int $status, array $data): void
+{
     http_response_code($status);
-
-    $response = [
-        'ok' => $status >= 200 && $status < 300
-    ];
-
-    if ($status >= 200 && $status < 300) {
-        $response['message'] = $message;
-        $response['redirect'] = $redirect;
-    } else {
-        $response['error'] = $message;
-    }
-
-    echo json_encode($response);
+    echo json_encode($data);
     exit;
 }
 
-// Require a resident session.
-if (empty($_SESSION['resident_id'])) {
-    respond(401, 'Please log in to continue.');
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(405, 'Method not allowed.');
-}
-
-$data = json_decode(file_get_contents('php://input'), true);
-
-if (!is_array($data)) {
-    respond(400, 'Invalid request.');
-}
-
-$newPassword = $data['new_password'] ?? '';
-$confirmPassword = $data['confirm_password'] ?? '';
-
-if (!is_string($newPassword) || !is_string($confirmPassword)) {
-    respond(400, 'Invalid password.');
-}
-
-if (strlen($newPassword) < 12) {
-    respond(400, 'Password must be at least 12 characters long.');
-}
-
-if (strlen($newPassword) > 72) {
-    respond(400, 'Password must not exceed 72 characters.');
-}
-
-if ($newPassword !== $confirmPassword) {
-    respond(400, 'Passwords do not match.');
-}
-
 try {
-    $pdo->beginTransaction();
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        respond(405, ['ok' => false, 'error' => 'Method not allowed.']);
+    }
 
-    // Lock the resident record while changing the password.
-    $stmt = $pdo->prepare("
-        SELECT resident_id, must_change_password
-        FROM residents
-        WHERE resident_id = :resident_id
-          AND is_active = TRUE
-        FOR UPDATE
-    ");
+    $adminId = $_SESSION['admin_id'] ?? null;
+    if (!$adminId) {
+        respond(401, ['ok' => false, 'error' => 'Please log in again.']);
+    }
 
-    $stmt->execute([
-        'resident_id' => $_SESSION['resident_id']
+    $permission = $pdo->prepare(
+        "SELECT 1
+         FROM admins a
+         JOIN admin_permissions ap ON ap.admin_id = a.admin_id
+         WHERE a.admin_id = ?
+           AND a.is_active = TRUE
+           AND ap.permission = 'manage_residents'
+         LIMIT 1"
+    );
+    $permission->execute([$adminId]);
+
+    if (!$permission->fetchColumn()) {
+        respond(403, ['ok' => false, 'error' => 'You do not have permission to reset resident passwords.']);
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!is_array($input)) {
+        respond(400, ['ok' => false, 'error' => 'Invalid request data.']);
+    }
+
+    $id = filter_var($input['id'] ?? null, FILTER_VALIDATE_INT);
+    $tempPassword = (string)($input['password'] ?? $input['temp_password'] ?? '');
+
+    if (!$id || $id < 1) {
+        respond(400, ['ok' => false, 'error' => 'Invalid resident ID.']);
+    }
+
+    if (strlen($tempPassword) < 8 || strlen($tempPassword) > 128) {
+        respond(400, ['ok' => false, 'error' => 'Temporary password must be at least 8 characters long.']);
+    }
+
+    $check = $pdo->prepare(
+        'SELECT resident_id FROM residents WHERE resident_id = ? LIMIT 1'
+    );
+    $check->execute([$id]);
+
+    if (!$check->fetchColumn()) {
+        respond(404, ['ok' => false, 'error' => 'Resident not found.']);
+    }
+
+    $hash = password_hash($tempPassword, PASSWORD_DEFAULT);
+
+    $update = $pdo->prepare(
+        'UPDATE residents
+         SET password_hash = ?, must_change_password = TRUE
+         WHERE resident_id = ?'
+    );
+    $update->execute([$hash, $id]);
+
+    respond(200, [
+        'ok' => true,
+        'message' => 'Resident password reset successfully.'
     ]);
-
-    $resident = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$resident) {
-        $pdo->rollBack();
-        respond(401, 'Your account is unavailable. Please contact your administrator.');
-    }
-
-    if (!$resident['must_change_password']) {
-        $pdo->rollBack();
-        respond(403, 'Your account does not require a password change.');
-    }
-
-    $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-
-    $update = $pdo->prepare("
-        UPDATE residents
-        SET password_hash = :password_hash,
-            must_change_password = FALSE
-        WHERE resident_id = :resident_id
-    ");
-
-    $update->execute([
-        'password_hash' => $passwordHash,
-        'resident_id' => $_SESSION['resident_id']
+} catch (Throwable $error) {
+    error_log('Resident password reset failed: ' . $error->getMessage());
+    respond(500, [
+        'ok' => false,
+        'error' => 'A server error occurred while resetting the resident password.'
     ]);
-
-    $pdo->commit();
-
-    $_SESSION['resident_must_change_password'] = false;
-
-    respond(200, 'Password updated successfully.', 'index.html');
-
-} catch (Throwable $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-
-    error_log('Resident password change error: ' . $e->getMessage());
-
-    respond(500, 'Something went wrong. Please try again later.');
 }
