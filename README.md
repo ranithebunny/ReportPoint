@@ -12,7 +12,7 @@ This guide explains how to collaborate on **ReportPoint** using Git and GitHub. 
 
 | Role | Username | Password | Notes |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `test-acc` | `admin123` | Administrative access (excluding admin management) |
+| **Admin** | `test-acc` | `admin123` | Administrative access |
 | **Resident** | `CP-3003` | `residentaccount123` | Standard resident access |
 
 ## 1. Install the Required Tools
