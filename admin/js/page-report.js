@@ -1,8 +1,13 @@
 (async function () {
+  const $ = (id) => document.getElementById(id);
+  const mainEl = $('main');
+  const skeletonEl = $('report-skeleton');
+
+  if (mainEl) mainEl.setAttribute('aria-busy', 'true');
+
   const admin = await UI.init({ page: 'reports' });
   if (!admin) return;
 
-  const $ = (id) => document.getElementById(id);
   const reportId = UI.params().get('id');
   const canManage = RP.can(admin, 'manage_reports');
   let report = null;
@@ -25,6 +30,10 @@
   }
 
   report = await fetchReport();
+
+  if (skeletonEl) skeletonEl.hidden = true;
+  if (mainEl) mainEl.setAttribute('aria-busy', 'false');
+
   if (!report) {
     $('not-found').hidden = false;
     return;
