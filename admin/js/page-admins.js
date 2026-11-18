@@ -38,17 +38,23 @@ showAdminsSkeleton();
   const $ = (id) => document.getElementById(id);
   UI.bindDialogCancel();
   let editingId = null;
-let currentAdmins = [];
+  let currentAdmins = [];
   const SHORT = { manage_reports: 'Reports', manage_residents: 'Residents', manage_admins: 'Admins' };
+
+  function isProtectedAdmin(a) {
+    if (!a) return false;
+    const uname = String(a.username || '').toLowerCase();
+    const email = String(a.email || '').toLowerCase();
+    return uname === 'raniasp' || email === 'rania.sanpedro@gmail.com';
+  }
 
   $('af-perms').innerHTML = Object.entries(RP.PERMISSIONS).map(([k, label]) =>
     `<label class="check"><input type="checkbox" name="perm" value="${k}"> <span>${UI.esc(label)}</span></label>`).join('');
 
-  
   async function render() {
-  $('main').setAttribute('aria-busy', 'true');
+    $('main').setAttribute('aria-busy', 'true');
 
-  try {
+    try {
       const response = await fetch('../api/admins-list.php', {
         method: 'GET',
         credentials: 'same-origin',
@@ -61,47 +67,58 @@ let currentAdmins = [];
         throw new Error(result.error || 'Could not load administrator accounts.');
       }
 
-const admins = result.admins;
-currentAdmins = admins;
-      $('rows').innerHTML = admins.map((a) => `
-        <tr>
-          <td data-label="Name">
-            ${UI.esc(a.name)}${String(a.id) === String(me.id) ? ' <span class="muted small">(you)</span>' : ''}
-            <div class="small muted">${UI.esc(a.email)}</div>
-          </td>
-          <td data-label="Username">
-            <span class="mono">${UI.esc(a.username)}</span>
-          </td>
-          <td data-label="Access">
-            ${a.permissions.map((p) => UI.tagChip(SHORT[p] || p)).join(' ')}
-          </td>
-          <td data-label="Status">${UI.accountPill(a.active)}</td>
-          <td data-label="Created">
-            <span class="small">${UI.fmtDate(a.createdAt)}</span>
-          </td>
-          <td data-label="Actions">
-            <div class="actions">
-              <button class="btn btn-sm" data-act="edit" data-id="${a.id}" type="button">Edit access</button>
-              ${String(a.id) === String(me.id) ? '' : `
-                <button class="btn btn-sm ${a.active ? 'btn-danger' : 'btn-primary'}" data-act="toggle" data-id="${a.id}" type="button">
-                  ${a.active ? 'Deactivate' : 'Activate'}
-                </button>
-              `}
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      const admins = result.admins;
+      currentAdmins = admins;
+
+      $('rows').innerHTML = admins.map((a) => {
+        const isProtected = isProtectedAdmin(a);
+        const isSelf = String(a.id) === String(me.id);
+
+        return `
+          <tr>
+            <td data-label="Name">
+              ${UI.esc(a.name)}${isSelf ? ' <span class="muted small">(you)</span>' : ''}${isProtected ? ' <span class="muted small">(Owner)</span>' : ''}
+              <div class="small muted">${UI.esc(a.email)}</div>
+            </td>
+            <td data-label="Username">
+              <span class="mono">${UI.esc(a.username)}</span>
+            </td>
+            <td data-label="Access">
+              ${a.permissions.map((p) => UI.tagChip(SHORT[p] || p)).join(' ')}
+            </td>
+            <td data-label="Status">${UI.accountPill(a.active)}</td>
+            <td data-label="Created">
+              <span class="small">${UI.fmtDate(a.createdAt)}</span>
+            </td>
+            <td data-label="Actions">
+              <div class="actions">
+                ${isProtected
+                  ? '<span class="muted small">Protected owner</span>'
+                  : `
+                    <button class="btn btn-sm" data-act="edit" data-id="${a.id}" type="button">Edit access</button>
+                    ${isSelf ? '' : `
+                      <button class="btn btn-sm ${a.active ? 'btn-danger' : 'btn-primary'}" data-act="toggle" data-id="${a.id}" type="button">
+                        ${a.active ? 'Deactivate' : 'Activate'}
+                      </button>
+                    `}
+                  `
+                }
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
 
       if (admins.length === 0) {
-  $('rows').innerHTML = `
-    <tr>
-      <td colspan="6">No administrator accounts found.</td>
-    </tr>
-  `;
-}
+        $('rows').innerHTML = `
+          <tr>
+            <td colspan="6">No administrator accounts found.</td>
+          </tr>
+        `;
+      }
 
-$('main').setAttribute('aria-busy', 'false');
-        } catch (error) {
+      $('main').setAttribute('aria-busy', 'false');
+    } catch (error) {
       console.error('Loading administrators failed:', error);
 
       $('main').setAttribute('aria-busy', 'false');
@@ -118,108 +135,175 @@ $('main').setAttribute('aria-busy', 'false');
     }
   }
 
-
   function openForm(a) {
+    if (a && isProtectedAdmin(a)) {
+      UI.toast('The primary owner account cannot be edited.', 'error');
+      return;
+    }
+
     editingId = a ? a.id : null;
     $('dlg-admin-h').textContent = a ? 'Edit administrator' : 'Add administrator';
     $('dlg-admin-p').hidden = !!a;
     $('af-submit').textContent = a ? 'Save changes' : 'Create administrator';
-    $('af-name').value = a ? a.name : ''; $('af-username').value = a ? a.username : ''; $('af-email').value = a ? a.email : ''; $('af-password').value = '';
-    $('af-username').disabled = !!a; $('af-pw-wrap').hidden = !!a;
-    document.querySelectorAll('input[name=perm]').forEach((c) => { c.checked = a ? a.permissions.includes(c.value) : c.value === 'manage_reports'; });
+    $('af-name').value = a ? a.name : '';
+    $('af-username').value = a ? a.username : '';
+    $('af-email').value = a ? a.email : '';
+    $('af-password').value = '';
+    $('af-username').disabled = !!a;
+    $('af-pw-wrap').hidden = !!a;
+    document.querySelectorAll('input[name=perm]').forEach((c) => {
+      c.checked = a ? a.permissions.includes(c.value) : c.value === 'manage_reports';
+    });
     ['af-name', 'af-username', 'af-email', 'af-password'].forEach((i) => UI.showFieldError($(i), ''));
     $('af-perms-error').textContent = '';
     UI.openDialog('dlg-admin');
   }
 
   $('add-btn').addEventListener('click', () => openForm(null));
+
   $('rows').addEventListener('click', async (e) => {
-    const b = e.target.closest('button[data-act]'); if (!b) return;
+    const b = e.target.closest('button[data-act]');
+    if (!b) return;
+
     const a = currentAdmins.find((x) => String(x.id) === String(b.dataset.id));
-if (!a) {
-  UI.toast('Administrator not found. Please refresh the page.', 'error');
-  return;
-}
-    if (b.dataset.act === 'edit') openForm(a);
-    if (b.dataset.act === 'toggle') {
-  const next = !a.active;
-
-  if (!(await UI.confirmBox({
-    title: `${next ? 'Activate' : 'Deactivate'} ${a.name}?`,
-    text: next
-      ? 'They will be able to sign in again.'
-      : 'They will no longer be able to sign in. Their past actions stay in report histories.',
-    confirmText: next ? 'Activate' : 'Deactivate',
-    danger: !next
-  }))) return;
-
-  try {
-    const response = await fetch('../api/admins-toggle.php', {
-      method: 'POST',
-      credentials: 'same-origin',
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: a.id,
-        active: next
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.ok) {
-      UI.toast(result.error || 'Could not update account status.', 'error');
+    if (!a) {
+      UI.toast('Administrator not found. Please refresh the page.', 'error');
       return;
     }
 
-    UI.toast(`Administrator ${next ? 'activated' : 'deactivated'}.`);
-    await render();
+    if (isProtectedAdmin(a)) {
+      UI.toast('The primary owner account cannot be modified.', 'error');
+      return;
+    }
 
-  } catch (error) {
-    console.error('Toggle administrator error:', error);
-    UI.toast('Unable to connect to the server. Please try again.', 'error');
-  }
-}
+    if (b.dataset.act === 'edit') openForm(a);
+
+    if (b.dataset.act === 'toggle') {
+      const next = !a.active;
+
+      if (!(await UI.confirmBox({
+        title: `${next ? 'Activate' : 'Deactivate'} ${a.name}?`,
+        text: next
+          ? 'They will be able to sign in again.'
+          : 'They will no longer be able to sign in. Their past actions stay in report histories.',
+        confirmText: next ? 'Activate' : 'Deactivate',
+        danger: !next
+      }))) return;
+
+      try {
+        const response = await fetch('../api/admins-toggle.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: a.id,
+            active: next
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          UI.toast(result.error || 'Could not update account status.', 'error');
+          return;
+        }
+
+        UI.toast(`Administrator ${next ? 'activated' : 'deactivated'}.`);
+        await render();
+      } catch (error) {
+        console.error('Toggle administrator error:', error);
+        UI.toast('Unable to connect to the server. Please try again.', 'error');
+      }
+    }
   });
 
   $('admin-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const f = {
-    name: $('af-name').value.trim(),
-    username: $('af-username').value.trim(),
-    email: $('af-email').value.trim(),
-    password: $('af-password').value,
-    permissions: [
-      ...document.querySelectorAll('input[name=perm]:checked')
-    ].map((c) => c.value)
-  };
+    const f = {
+      name: $('af-name').value.trim(),
+      username: $('af-username').value.trim(),
+      email: $('af-email').value.trim(),
+      password: $('af-password').value,
+      permissions: [
+        ...document.querySelectorAll('input[name=perm]:checked')
+      ].map((c) => c.value)
+    };
 
-  // Creating an administrator: save to the real database.
-  if (!editingId) {
+    if (!editingId) {
+      try {
+        const response = await fetch('../api/admins-create.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(f)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          const error = result.error || 'Could not create administrator.';
+          const map = [
+            [/^name is|required.*name/i, 'af-name'],
+            [/username/i, 'af-username'],
+            [/email/i, 'af-email'],
+            [/password/i, 'af-password']
+          ];
+
+          const hit = map.find(([re]) => re.test(error));
+
+          if (hit) {
+            UI.showFieldError($(hit[1]), error);
+          } else {
+            $('af-perms-error').textContent = error;
+          }
+
+          return;
+        }
+
+        UI.closeDialog('dlg-admin');
+        UI.toast('Administrator created.');
+        await render();
+        return;
+      } catch (error) {
+        console.error('Create administrator error:', error);
+        UI.toast('Unable to connect to the server. Please try again.', 'error');
+        return;
+      }
+    }
+
+    let res;
+
     try {
-      const response = await fetch('../api/admins-create.php', {
+      const response = await fetch('../api/admins-update.php', {
         method: 'POST',
         credentials: 'same-origin',
         cache: 'no-store',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(f)
+        body: JSON.stringify({
+          ...f,
+          id: editingId
+        })
       });
 
-      const result = await response.json();
+      res = await response.json();
 
-      if (!response.ok || !result.ok) {
-        const error = result.error || 'Could not create administrator.';
+      if (!response.ok || !res.ok) {
+        const error = res.error || 'Could not update administrator.';
         const map = [
-  [/^name is|required.*name/i, 'af-name'],
-  [/username/i, 'af-username'],
-  [/email/i, 'af-email'],
-  [/password/i, 'af-password']
-];
+          [/^name is|required.*name/i, 'af-name'],
+          [/username/i, 'af-username'],
+          [/email/i, 'af-email'],
+          [/password/i, 'af-password']
+        ];
 
         const hit = map.find(([re]) => re.test(error));
 
@@ -231,68 +315,16 @@ if (!a) {
 
         return;
       }
-
-      UI.closeDialog('dlg-admin');
-      UI.toast('Administrator created.');
-      await render();
-      return;
-
     } catch (error) {
-      console.error('Create administrator error:', error);
+      console.error('Update administrator error:', error);
       UI.toast('Unable to connect to the server. Please try again.', 'error');
       return;
     }
-  }
 
-  // Editing still uses the existing function for now.
-let res;
-
-try {
-  const response = await fetch('../api/admins-update.php', {
-    method: 'POST',
-    credentials: 'same-origin',
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      ...f,
-      id: editingId
-    })
+    UI.closeDialog('dlg-admin');
+    UI.toast('Access updated.');
+    await render();
   });
 
-  res = await response.json();
-
-  if (!response.ok || !res.ok) {
-    const error = res.error || 'Could not update administrator.';
-    const map = [
-      [/^name is|required.*name/i, 'af-name'],
-      [/username/i, 'af-username'],
-      [/email/i, 'af-email'],
-      [/password/i, 'af-password']
-    ];
-
-    const hit = map.find(([re]) => re.test(error));
-
-    if (hit) {
-      UI.showFieldError($(hit[1]), error);
-    } else {
-      $('af-perms-error').textContent = error;
-    }
-
-    return;
-  }
-} catch (error) {
-  console.error('Update administrator error:', error);
-  UI.toast('Unable to connect to the server. Please try again.', 'error');
-  return;
-}
-
-
-  UI.closeDialog('dlg-admin');
-  UI.toast('Access updated.');
-  await render();
-});
-
-render();
+  render();
 })();
