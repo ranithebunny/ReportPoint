@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('login-form');
   const password = document.getElementById('password');
@@ -15,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginAlert = document.getElementById('login-alert');
 
   if (!form || !username || !password) return;
+
+  const RESIDENT_CODE_REGEX = /^CP-\d{4}$/;
 
   function showError(input, errorElement, message) {
     input.setAttribute('aria-invalid', 'true');
@@ -39,14 +40,27 @@ document.addEventListener('DOMContentLoaded', () => {
     loginAlert.hidden = true;
 
     let isValid = true;
+    const rawUser = username.value.trim();
+    const normalizedUser = isResident ? rawUser.toUpperCase() : rawUser;
 
-    if (!username.value.trim()) {
+    if (isResident) {
+      username.value = normalizedUser;
+    }
+
+    if (!normalizedUser) {
       showError(
         username,
         usernameError,
         isResident
           ? 'Please enter your Resident ID.'
           : 'Please enter your username.'
+      );
+      isValid = false;
+    } else if (isResident && !RESIDENT_CODE_REGEX.test(normalizedUser)) {
+      showError(
+        username,
+        usernameError,
+        'Resident ID must follow the format CP-XXXX (e.g., CP-3002).'
       );
       isValid = false;
     }
@@ -77,11 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify(
             isResident
               ? {
-                  resident_code: username.value.trim(),
+                  resident_code: normalizedUser,
                   password: password.value
                 }
               : {
-                  username: username.value.trim(),
+                  username: normalizedUser,
                   password: password.value
                 }
           )
@@ -98,8 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('rp_resident_nav', result.resident.name);
       }
       if (!isResident && result.admin && result.admin.name) {
-  sessionStorage.setItem('rp_admin_nav', result.admin.name);
-}
+        sessionStorage.setItem('rp_admin_nav', result.admin.name);
+      }
       location.replace(
         isResident ? '../resident/index.html' : 'dashboard.html'
       );
@@ -113,7 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   username.addEventListener('input', () => {
-    if (username.value.trim()) clearError(username, usernameError);
+    if (isResident) {
+      username.value = username.value.toUpperCase();
+      if (RESIDENT_CODE_REGEX.test(username.value.trim())) {
+        clearError(username, usernameError);
+      }
+    } else if (username.value.trim()) {
+      clearError(username, usernameError);
+    }
     loginAlert.hidden = true;
   });
 
