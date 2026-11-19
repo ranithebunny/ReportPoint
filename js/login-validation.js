@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!form || !username || !password) return;
 
-const RESIDENT_CODE_REGEX = /^CP-\d{3,4}$/;
+  const RESIDENT_CODE_REGEX = /^CP-\d{4}$/;
 
   function showError(input, errorElement, message) {
     input.setAttribute('aria-invalid', 'true');
