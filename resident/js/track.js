@@ -1,13 +1,46 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const subtitleEl = document.querySelector('.report-description');
+  const searchLabel = document.querySelector('label[for="trackSearchInput"]');
   const searchInput = document.getElementById('trackSearchInput');
   const filterToggle = document.getElementById('trackFilterToggle');
   const filterBar = document.getElementById('trackStatusFilters');
   const trackCount = document.getElementById('trackCount');
   const trackList = document.getElementById('trackList');
 
+  let isAuthenticated = false;
   let allReports = [];
   let selectedStatus = '';
   let debounceTimer = null;
+
+  // 1. Check resident login state & adapt UI copy/controls
+  try {
+    const authRes = await fetch('../api/resident-session.php', {
+      method: 'GET',
+      credentials: 'same-origin',
+      cache: 'no-store'
+    });
+    const authData = await authRes.json();
+    isAuthenticated = Boolean(authRes.ok && authData && authData.authenticated);
+  } catch (err) {
+    isAuthenticated = false;
+  }
+
+  if (isAuthenticated) {
+    if (subtitleEl) {
+      subtitleEl.textContent = 'Search your past reports or filter them by status. Open one to see where it stands.';
+    }
+    if (searchLabel) searchLabel.textContent = 'Search reports';
+    if (searchInput) searchInput.placeholder = 'e.g. broken lights, 1208, or RP-2026-001';
+    if (filterToggle) filterToggle.hidden = false;
+  } else {
+    if (subtitleEl) {
+      subtitleEl.innerHTML = 'Enter your report reference number to check where it stands, or <a href="login.html?next=track.html">sign in</a> to view all your past reports.';
+    }
+    if (searchLabel) searchLabel.textContent = 'Track by reference number';
+    if (searchInput) searchInput.placeholder = 'e.g. RP-2026-001';
+    if (filterToggle) filterToggle.hidden = true;
+    if (filterBar) filterBar.hidden = true;
+  }
 
   function statusClass(statusName) {
     const key = (statusName || '').toLowerCase();
@@ -39,23 +72,48 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/"/g, '&quot;');
   }
 
-  function renderReports() {
-    const filtered = selectedStatus
-      ? allReports.filter((r) => (r.status_name || '').toLowerCase() === selectedStatus.toLowerCase())
+  function renderGuestPrompt() {
+    trackCount.textContent = 'Enter a tracking number above';
+    trackList.innerHTML = `
+      <div class="empty">
+        <strong>Look up a single report</strong>
+        Enter your tracking number (e.g., <code>RP-2026-001</code>) above, or <a href="login.html?next=track.html">sign in</a> to browse all your reports.
+      </div>
+    `;
+  }
+
+  function renderReports(currentQuery = '') {
+    const activeStatus = isAuthenticated ? selectedStatus : '';
+    const filtered = activeStatus
+      ? allReports.filter((r) => (r.status_name || '').toLowerCase() === activeStatus.toLowerCase())
       : allReports;
 
     const total = filtered.length;
-    trackCount.textContent = selectedStatus
-      ? `Showing ${total} ${selectedStatus} report${total === 1 ? '' : 's'}`
-      : `Showing all ${total} report${total === 1 ? '' : 's'}`;
+
+    if (!isAuthenticated) {
+      trackCount.textContent = total === 0
+        ? 'No matching report found'
+        : `Showing ${total} matching report${total === 1 ? '' : 's'}`;
+    } else {
+      trackCount.textContent = activeStatus
+        ? `Showing ${total} ${activeStatus} report${total === 1 ? '' : 's'}`
+        : `Showing all ${total} report${total === 1 ? '' : 's'}`;
+    }
 
     if (total === 0) {
-      trackList.innerHTML = `
-        <div class="empty">
-          <strong>No matching reports found</strong>
-          Try searching with a different tracking number, keyword, or unit number.
-        </div>
-      `;
+      trackList.innerHTML = isAuthenticated
+        ? `
+          <div class="empty">
+            <strong>No matching reports found</strong>
+            Try searching with a different tracking number, keyword, or unit number.
+          </div>
+        `
+        : `
+          <div class="empty">
+            <strong>No report found for "${escapeHtml(currentQuery)}"</strong>
+            Double-check your tracking number (e.g., <code>RP-2026-001</code>) and try again.
+          </div>
+        `;
       return;
     }
 
@@ -89,10 +147,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function loadReports(query = '') {
+    if (!isAuthenticated && !query) {
+      allReports = [];
+      renderGuestPrompt();
+      return;
+    }
+
     trackCount.textContent = 'Loading reports...';
     try {
       const url = `../api/track.php?q=${encodeURIComponent(query)}`;
-      const res = await fetch(url, { cache: 'no-store' });
+      const res = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-store'
+      });
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -100,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       allReports = data.reports || [];
-      renderReports();
+      renderReports(query);
     } catch (err) {
       trackCount.textContent = 'Unable to load reports';
       trackList.innerHTML = `
@@ -130,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.filter-chip').forEach((c) => c.classList.remove('active'));
       chip.classList.add('active');
       selectedStatus = chip.dataset.status || '';
-      renderReports();
+      renderReports(searchInput ? searchInput.value.trim() : '');
     });
   });
 
@@ -143,5 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  loadReports();
+  // Support pre-filled ?code= or ?id= query param (e.g., from report confirmation link)
+  const params = new URLSearchParams(window.location.search);
+  const initialCode = (params.get('code') || params.get('id') || '').trim();
+  if (initialCode && searchInput) {
+    searchInput.value = initialCode;
+  }
+
+  loadReports(initialCode);
 });
