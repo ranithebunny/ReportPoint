@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadReports(query = '') {
     trackCount.textContent = 'Loading reports...';
     try {
-      const url = `../api/track-reports.php?q=${encodeURIComponent(query)}`;
+      const url = `../api/track.php?q=${encodeURIComponent(query)}`;
       const res = await fetch(url, { cache: 'no-store' });
       const data = await res.json();
 
