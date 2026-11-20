@@ -1091,4 +1091,427 @@ textarea {
     grid-template-columns: 1fr;
     gap: 0;
   }
+<<<<<<< Updated upstream
+=======
+
+  .form-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .header-contacts {
+    display: none;
+  }
+
+  .header-right {
+    display: contents;
+  }
+
+  .brand-mark {
+    height: 40px;
+  }
+
+  .brand-divider {
+    height: 28px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.15rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+
+  .footer-contacts {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 0.65rem !important;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+}
+
+@media (max-width: 768px) {
+  .concern-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .steps-grid,
+  .statistics-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .category-section {
+    padding: 48px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .how-it-works-section,
+  .statistics-section {
+    padding: 56px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    min-height: 76vh;
+    padding: 3rem 1.25rem 3.5rem;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+    max-width: 11ch;
+    margin: 0 auto;
+    line-height: 1.15;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+    max-width: 34ch;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 245px;
+    justify-content: center;
+    padding: 13px 20px;
+  }
+
+  .section-title,
+  .category-title {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+
+  .category {
+    min-height: auto;
+    padding: 22px 20px;
+  }
+
+  main.report-page {
+    padding: 1.75rem 1rem 3rem;
+  }
+
+  .form-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .upload-box {
+    padding: 24px 12px;
+  }
+
+  .upload-box input[type="file"] {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .site-footer {
+    padding: 1.25rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+}
+
+/* Resident Account Dropdown Menu */
+.nav-user-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-user-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.32rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-user-trigger:hover,
+.nav-user-trigger[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+}
+
+.nav-user-trigger svg.chevron {
+  transition: transform 0.15s ease;
+}
+
+.nav-user-trigger[aria-expanded="true"] svg.chevron {
+  transform: rotate(180deg);
+}
+
+.nav-user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  min-width: 195px;
+  background: #233329;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  padding: 0.35rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nav-user-dropdown[hidden] {
+  display: none;
+}
+
+.nav-user-dropdown a,
+.nav-user-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  text-decoration: none;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-user-dropdown a:hover,
+.nav-user-dropdown button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.nav-user-dropdown .menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0.2rem 0.4rem;
+}
+
+.nav-user-dropdown button.logout-item:hover {
+  background: rgba(220, 68, 55, 0.22);
+  color: #ffb4a9;
+}
+
+.confirmation-page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem 5rem;
+}
+
+.confirmation-container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.status-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #4f9e5b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.confirmation-title {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 3.5vw, 2.35rem);
+  color: #f3f5f2;
+  margin: 0 0 0.85rem;
+}
+
+.confirmation-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #cbd3cb;
+  max-width: 470px;
+  margin: 0 0 1.85rem;
+}
+
+.report-code-box {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  letter-spacing: 0.04em;
+  color: #f3f5f2;
+  border: 1.5px dashed rgba(215, 224, 215, 0.55);
+  padding: 0.85rem 2.25rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.summary-card {
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(215, 224, 215, 0.35);
+  border-radius: 16px;
+  padding: 1.6rem 1.85rem;
+  margin-bottom: 2.15rem;
+}
+
+.summary-heading {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: #f3f5f2;
+  margin: 0 0 1.15rem;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.84rem;
+}
+
+.summary-label {
+  color: #a6b2a7;
+}
+
+.summary-value {
+  color: #eef2ee;
+  font-weight: 500;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #dce5dc;
+  border: 1px solid rgba(215, 224, 215, 0.45);
+  border-radius: 999px;
+}
+
+.confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-primary-action {
+  background-color: #4f7754;
+  border: 1px solid #6b9670;
+  color: #f5f7f5;
+}
+
+.btn-primary-action:hover {
+  background-color: #5b8761;
+  transform: translateY(-1px);
+}
+
+.btn-secondary-action {
+  background-color: transparent;
+  border: 1px solid rgba(215, 224, 215, 0.45);
+  color: #e4ebe4;
+}
+
+.btn-secondary-action:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(215, 224, 215, 0.75);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .summary-card {
+    padding: 1.35rem 1.25rem;
+  }
+
+  .summary-row {
+    grid-template-columns: 95px 1fr;
+  }
+
+  .confirmation-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-action {
+    width: 100%;
+  }
+>>>>>>> Stashed changes
 }

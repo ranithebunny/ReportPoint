@@ -3,11 +3,115 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+<<<<<<< Updated upstream
   <title>ReportPoint · confirmation</title>
   <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
   <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
   <!-- TODO (Vinnie): confirmation page -->
+=======
+  <title>ReportPoint · Confirmation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="ReportPoint home">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">ReportPoint</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
+
+      <div class="header-right">
+        <div class="header-contacts">
+          <span>Globe: +63 954 488 7599</span>
+          <span>Smart: +63 962 626 7420</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Resident">
+          <a href="index.html">Home</a>
+          <a href="report.html">Report</a>
+          <a href="track.html">Track</a>
+          <a href="faq.html">FAQ</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="confirmation-page">
+    <div class="confirmation-container">
+      <div class="status-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <h1 class="confirmation-title">Report submitted</h1>
+      <p class="confirmation-subtitle">
+        Your report has been successfully submitted and is now awaiting review by our administrators. You can track its progress anytime through the ‘Track’ page.
+      </p>
+
+      <div class="report-code-box" id="confirmReportId">—</div>
+
+      <section class="summary-card" aria-labelledby="summaryHeading">
+        <h2 class="summary-heading" id="summaryHeading">Summary</h2>
+        <div class="summary-list">
+          <div class="summary-row">
+            <span class="summary-label">Category</span>
+            <span class="summary-value" id="confirmCategory">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Location</span>
+            <span class="summary-value" id="confirmLocation">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Severity</span>
+            <span class="summary-value" id="confirmSeverity">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Status</span>
+            <span class="summary-value">
+              <span class="status-pill" id="confirmStatus">Received</span>
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Next step</span>
+            <span class="summary-value" id="confirmNextStep">Under review by admin</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="confirmation-actions">
+        <a href="report.html" class="btn-action btn-primary-action">
+          <span>SUBMIT ANOTHER</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="track.html" class="btn-action btn-secondary-action">
+          <span>TRACK A REPORT</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | <a href="faq.html#accessibility">Accessibility</a> &nbsp;<a href="faq.html#privacy">Privacy Policy</a></p>
+    <p class="footer-contacts">
+      <span>Globe: +63 954 488 7599</span>
+      <span>Smart: +63 962 626 7420</span>
+    </p>
+  </footer>
+
+  <script src="js/resident-nav.js"></script>
+  <script src="js/confirmation.js"></script>
+>>>>>>> Stashed changes
 </body>
 </html>
