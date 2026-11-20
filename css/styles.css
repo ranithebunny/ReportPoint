@@ -1462,3 +1462,230 @@ main.report-page {
   background: rgba(220, 68, 55, 0.22);
   color: #ffb4a9;
 }
+
+/* ---------- TRACK PAGE ---------- */
+main.track-page {
+  max-width: 960px;
+}
+
+.track-shell {
+  padding: 2rem 2.25rem;
+}
+
+.track-search-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+  color: var(--text);
+}
+
+.track-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.track-search-box input[type="search"] {
+  padding: 0.85rem 3rem 0.85rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--line-soft);
+}
+
+.track-filter-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0.35rem;
+  border-radius: 6px;
+}
+
+.track-filter-btn:hover {
+  color: var(--mint);
+}
+
+.track-status-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.filter-chip {
+  background: transparent;
+  border: 1px solid var(--line-soft);
+  color: var(--text-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.85rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.filter-chip:hover,
+.filter-chip.active {
+  border-color: var(--mint);
+  color: var(--text);
+  background: rgba(159, 212, 176, 0.14);
+}
+
+.track-divider {
+  margin: 1.5rem 0 1.25rem;
+}
+
+.track-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.track-item {
+  background: var(--bg-card-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  padding: 1.35rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  transition: border-color 0.15s ease;
+}
+
+.track-item:hover {
+  border-color: var(--line);
+}
+
+.track-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.track-item-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  color: var(--text);
+  margin: 0 0 0.25rem;
+}
+
+.track-item-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.track-item-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.track-item-code {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .track-shell {
+    padding: 1.35rem 1rem;
+  }
+
+  .track-item {
+    padding: 1.15rem 1.1rem;
+  }
+
+  .track-item-top {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- FAQ PAGE ---------- */
+main.faq-page {
+  max-width: 960px;
+}
+
+.faq-shell {
+  padding: 2rem 2.25rem;
+}
+
+.faq-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.faq-search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.faq-search-box input[type="search"] {
+  padding: 0.85rem 1.1rem 0.85rem 2.65rem;
+  background: var(--bg-input);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.faq-item {
+  background: var(--bg-card-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease;
+}
+
+.faq-item:hover,
+.faq-item[open] {
+  border-color: var(--line);
+}
+
+.faq-question {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.faq-answer {
+  padding: 1rem 1.5rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  border-top: 1px solid var(--line-soft);
+}

@@ -3,48 +3,175 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ReportPoint · FAQs</title>
+  <title>ReportPoint · FAQ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/theme.css"> 
-<link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
 </head>
-<body>
-<header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="ReportPoint faq">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">ReportPoint</span>
-    </a>
+<body class="report-body">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="ReportPoint home">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">ReportPoint</span>
+      </a>
 
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
 
-    <div class="header-right">
-      <div class="header-contacts">
-        <span>Globe: +63 954 488 7599</span>
-        <span>Smart: +63 962 626 7420</span>
+      <div class="header-right">
+        <div class="header-contacts">
+          <span>Globe: +63 954 488 7599</span>
+          <span>Smart: +63 962 626 7420</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Resident">
+          <a href="index.html">Home</a>
+          <a href="report.html">Report</a>
+          <a href="track.html">Track</a>
+          <a href="faq.html" aria-current="page">FAQ</a>
+          <a href="login.html">Login</a>
+        </nav>
       </div>
-      <nav class="nav" id="nav" aria-label="Resident">
-        <a href="index.html" >Home</a>
-        <a href="report.html">Report</a>
-        <a href="track.html" >Track</a>
-        <a href="faq.html" aria-current="page">FAQ</a>
-        <a href="login.html">Login</a>
-      </nav>
     </div>
-  </div>
-</header>
+  </header>
 
-<footer class="site-footer">
-  <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | <a href="faq.html#accessibility">Accessibility</a> &nbsp;<a href="faq.html#privacy">Privacy Policy</a></p>
-  <p class="footer-contacts">
-    <span>Globe: +63 954 488 7599</span>
-    <span>Smart: +63 962 626 7420</span>
-  </p>
-</footer>
-<script src="js/resident-nav.js"></script>
+  <main class="report-page faq-page">
+    <div class="report-header">
+      <p class="eyebrow">FAQ</p>
+      <h1 class="report-title">Frequently Asked Questions</h1>
+    </div>
+
+    <section class="card faq-shell" aria-label="Frequently Asked Questions">
+      <div class="faq-search-box">
+        <svg class="faq-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="search"
+          id="faqSearchInput"
+          placeholder="What question would you like to ask?"
+          aria-label="Search frequently asked questions"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="faq-list" id="faqList">
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>How long does a report take to become resolved?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            Resolution times depend on the category and severity of the issue. Routine maintenance concerns are typically reviewed within 24 to 48 hours, while urgent safety or utility issues are prioritized immediately.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What do I do if my report is rejected?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            Open your report on the Track page to view the administrator’s rejection reason and notes. You can submit a new report with clearer details, exact location information, or supporting photo/video evidence.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Who do I contact if I have further questions about my report?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            You can reply directly through your report’s thread on the Track page or call the College Point front desk at +63 954 488 7599 (Globe) or +63 962 626 7420 (Smart) with your tracking number.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>What do I do if my report has not been updated in a while?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            Check the activity timeline on the Track page to see if administrators requested additional information. If no update appears after 3 business days, reach out to the admin office using your tracking code.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span>Are these reports documented by the administrators of CollegePoint?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            Yes. Every submitted report is logged with a unique tracking number and timestamped status history so administrators can track repairs, follow-ups, and building maintenance records.
+          </div>
+        </details>
+
+        <details class="faq-item" id="privacy">
+          <summary class="faq-question">
+            <span>Who can see my report?</span>
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </summary>
+          <div class="faq-answer">
+            Only authorized College Point administrators and you (using your tracking number or resident account) can view the details of your report. Personal contact details are kept confidential.
+          </div>
+        </details>
+      </div>
+
+      <div class="empty" id="faqEmpty" hidden>
+        <strong>No matching questions found</strong>
+        Try searching with different keywords or contact the front desk for assistance.
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | <a href="faq.html#accessibility">Accessibility</a> &nbsp;<a href="faq.html#privacy">Privacy Policy</a></p>
+    <p class="footer-contacts">
+      <span>Globe: +63 954 488 7599</span>
+      <span>Smart: +63 962 626 7420</span>
+    </p>
+  </footer>
+
+  <script src="js/resident-nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('faqSearchInput');
+      const items = Array.from(document.querySelectorAll('#faqList .faq-item'));
+      const emptyState = document.getElementById('faqEmpty');
+
+      if (!searchInput) return;
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        items.forEach((item) => {
+          const matches = item.textContent.toLowerCase().includes(query);
+          item.hidden = !matches;
+          if (matches) visibleCount++;
+        });
+
+        if (emptyState) {
+          emptyState.hidden = visibleCount > 0;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
