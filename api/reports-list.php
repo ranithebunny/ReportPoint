@@ -49,13 +49,13 @@ try {
             r.report_code,
             r.title,
             r.location,
-            COALESCE(res.full_name, 'Unknown') AS residentName,
+            COALESCE(res.full_name, 'Unknown') AS \"residentName\",
             COALESCE(res.unit, '') AS unit,
             COALESCE(c.name, 'Uncategorized') AS category,
             COALESCE(p.name, 'Medium') AS priority,
             COALESCE(s.name, 'Received') AS status,
-            r.created_at AS submittedAt,
-            r.updated_at AS updatedAt
+            r.created_at AS \"submittedAt\",
+            r.updated_at AS \"updatedAt\"
         FROM reports r
         LEFT JOIN residents res ON res.resident_id = r.resident_id
         LEFT JOIN categories c ON c.category_id = r.category_id

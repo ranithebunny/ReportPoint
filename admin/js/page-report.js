@@ -57,7 +57,7 @@
       <dt>Resident</dt><dd><a href="resident.html?id=${encodeURIComponent(report.residentKey)}">${UI.esc(report.residentName)}</a> · Unit ${UI.esc(report.unit)}</dd>
       <dt>Submitted</dt><dd>${UI.fmtDateTime(report.submittedAt)}</dd>
       <dt>Last update</dt><dd>${UI.fmtDateTime(report.updatedAt)}</dd>
-      <dt>Evidence</dt><dd>${report.evidence ? `<a href="${UI.esc(report.evidence)}" target="_blank" rel="noopener">View file</a>` : '<span class="muted">None uploaded</span>'}</dd>
+      <dt>Evidence</dt><dd>${report.evidence ? `<a href="${UI.esc(/^(https?:|\/|\.\.\/)/.test(report.evidence) ? report.evidence : '../' + report.evidence)}" target="_blank" rel="noopener">View file</a>` : '<span class="muted">None uploaded</span>'}</dd>
       <dt>Tags</dt><dd>${report.tags.length ? report.tags.map(UI.tagChip).join(' ') : '<span class="muted">No tags</span>'}</dd>
       ${report.rejection ? `<dt>Rejection</dt><dd>${UI.esc(report.rejection.reason === 'Other' ? 'Other: ' + report.rejection.explanation : report.rejection.reason)}</dd>` : ''}`;
     $('r-desc').textContent = report.description;

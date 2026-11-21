@@ -3,42 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ReportPoint · confirmation</title>
-  <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
+  <title>ReportPoint · Report Submitted</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/theme.css"> 
-<link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
 </head>
-<body>
-  <!-- TODO (Vinnie): confirmation page -->
-       <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-      </span>
-    </a>
+<body class="report-body">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="ReportPoint home">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">ReportPoint</span>
+      </a>
 
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
 
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="index.html">Home</a>
-      <a href="report.html">Report</a>
-      <a href="track.html">Track</a>
-      <a href="faq.html">FAQ</a>
+      <div class="header-right">
+        <div class="header-contacts">
+          <span>Globe: +63 954 488 7599</span>
+          <span>Smart: +63 962 626 7420</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Resident">
+          <a href="index.html">Home</a>
+          <a href="report.html" aria-current="page">Report</a>
+          <a href="track.html">Track</a>
+          <a href="faq.html">FAQ</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-      <span class="nav-user">
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
-  </div>
-<main class="confirmation-page">
+  <main class="confirmation-page">
     <div class="confirmation-container">
       <div class="status-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -86,7 +86,7 @@
           <span>SUBMIT ANOTHER</span>
           <span aria-hidden="true">&rarr;</span>
         </a>
-        <a href="track.html" class="btn-action btn-secondary-action">
+        <a href="track.html" id="confirmTrackLink" class="btn-action btn-secondary-action">
           <span>TRACK A REPORT</span>
           <span aria-hidden="true">&rarr;</span>
         </a>
@@ -115,6 +115,11 @@
       document.getElementById('confirmSeverity').textContent = report.severity;
       document.getElementById('confirmStatus').textContent   = report.status;
       document.getElementById('confirmNextStep').textContent = report.next_step;
+
+      const trackLink = document.getElementById('confirmTrackLink');
+      if (trackLink && report.report_id) {
+        trackLink.href = `track.html?code=${encodeURIComponent(report.report_id)}`;
+      }
     });
   </script>
 </body>

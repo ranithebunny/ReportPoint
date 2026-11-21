@@ -1,6 +1,16 @@
 <?php
 header('Content-Type: application/json');
 
+session_start();
+$sessionResidentId = $_SESSION['resident_id'] ?? null;
+session_write_close();
+
+if (!$sessionResidentId) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'error' => 'You must be signed in to submit a report.']);
+    exit;
+}
+
 if (file_exists(__DIR__ . '/../.env')) {
     foreach (file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) continue;
@@ -51,13 +61,7 @@ try {
     $statusStmt = $pdo->prepare("SELECT status_id FROM statuses WHERE LOWER(name) = 'received' LIMIT 1");
     $statusId = $statusStmt->fetchColumn() ?: 1;
 
-    $residentId = null;
-    $resStmt = $pdo->prepare("SELECT resident_id FROM residents WHERE unit = :unit OR LOWER(email) = LOWER(:email) LIMIT 1");
-    $resStmt->execute([':unit' => $unitNumber, ':email' => $email]);
-    $foundResident = $resStmt->fetchColumn();
-    if ($foundResident !== false) {
-        $residentId = (int) $foundResident;
-    }
+    $residentId = (int) $sessionResidentId;
 
     $evidencePath = null;
     if (!empty($_FILES['evidence']['name']) && $_FILES['evidence']['error'] === UPLOAD_ERR_OK) {
@@ -106,7 +110,7 @@ try {
 
     $histStmt = $pdo->prepare("
         INSERT INTO report_history (report_id, event_type, actor_type, resident_id, new_value, message, is_resident_visible)
-        VALUES (:report_id, 'submitted', 'resident', :resident_id, 'Received', 'Report submitted', 1)
+        VALUES (:report_id, 'submitted', 'resident', :resident_id, 'Received', 'Report submitted', TRUE)
     ");
     $histStmt->execute([
         ':report_id'   => $reportId,

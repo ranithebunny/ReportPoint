@@ -39,7 +39,7 @@ try {
             r.is_active AS active,
             r.must_change_password AS "passwordChanged",
             r.created_at AS "createdAt",
-            COUNT(rep.report_id) AS reportCount
+            COUNT(rep.report_id) AS "reportCount"
          FROM residents r
          LEFT JOIN reports rep ON rep.resident_id = r.resident_id
          GROUP BY

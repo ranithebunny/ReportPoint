@@ -111,10 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     submitBtn.disabled = true;
     submitBtn.textContent = 'SUBMITTING...';
 
-    try {
+   try {
       const formData = new FormData(reportForm);
 
-      const response = await fetch('../api/report-create.php', {
+      const response = await fetch('../api/submit-report.php', {
         method: 'POST',
         credentials: 'same-origin',
         body: formData
@@ -128,28 +128,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      if (!response.ok || !result.ok) {
+      if (!response.ok || !result.success) {
         showFormError(result.error || 'Could not submit report. Please try again.');
         return;
       }
 
       // Replace form with confirmation card + Track link
-      const formCard = reportForm.closest('.form-card');
-      const reportId = result.reportId || result.id || '';
-      if (formCard) {
-        formCard.innerHTML = `
-          <div class="auth-gate-card" style="margin:1.5rem auto;">
-            <div class="auth-gate-icon" aria-hidden="true">✓</div>
-            <h2>Report Submitted</h2>
-            <p>Thank you! Your concern has been logged and a confirmation email was sent to <strong>${emailInput.value}</strong>.</p>
-            ${reportId ? `<p style="font-size:1.1rem;margin-bottom:1.5rem;">Tracking ID: <strong>${reportId}</strong></p>` : ''}
-            <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;">
-              <a href="track.html${reportId ? `?id=${encodeURIComponent(reportId)}` : ''}" class="submit-btn" style="display:inline-block;width:auto;padding:.85rem 1.5rem;text-decoration:none;">Track This Report</a>
-              <a href="report.html" class="btn" style="padding:.85rem 1.5rem;text-decoration:none;">Submit Another</a>
-            </div>
-          </div>
-        `;
+      if (result.report) {
+        sessionStorage.setItem('latestReport', JSON.stringify(result.report));
       }
+      window.location.href = 'confirmation.html';
     } catch (err) {
       console.error('Report submission error:', err);
       showFormError('Unable to connect to the server. Please check your connection and try again.');
