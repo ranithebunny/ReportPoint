@@ -1494,6 +1494,23 @@ main.report-page {
   gap: 0.15rem;
 }
 
+@media (max-width: 860px) {
+  .nav-user-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .nav-user-dropdown {
+    position: static;
+    width: fit-content;
+    min-width: 195px;
+    margin-top: 0.5rem;
+    box-shadow: none;
+  }
+}
+
 .nav-user-dropdown[hidden] {
   display: none;
 }
