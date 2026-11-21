@@ -1689,3 +1689,187 @@ main.faq-page {
   color: var(--text-muted);
   border-top: 1px solid var(--line-soft);
 }
+
+/* ---------- CONFIRMATION PAGE ---------- */
+
+
+.confirmation-page {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem 5rem;
+}
+
+.confirmation-container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.status-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #4f9e5b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.confirmation-title {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 3.5vw, 2.35rem);
+  color: #f3f5f2;
+  margin: 0 0 0.85rem;
+}
+
+.confirmation-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #cbd3cb;
+  max-width: 470px;
+  margin: 0 0 1.85rem;
+}
+
+.report-code-box {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  letter-spacing: 0.04em;
+  color: #f3f5f2;
+  border: 1.5px dashed rgba(215, 224, 215, 0.55);
+  padding: 0.85rem 2.25rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.summary-card {
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(215, 224, 215, 0.35);
+  border-radius: 16px;
+  padding: 1.6rem 1.85rem;
+  margin-bottom: 2.15rem;
+}
+
+.summary-heading {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: #f3f5f2;
+  margin: 0 0 1.15rem;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.84rem;
+}
+
+.summary-label {
+  color: #a6b2a7;
+}
+
+.summary-value {
+  color: #eef2ee;
+  font-weight: 500;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #dce5dc;
+  border: 1px solid rgba(215, 224, 215, 0.45);
+  border-radius: 999px;
+}
+
+.confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-primary-action {
+  background-color: #4f7754;
+  border: 1px solid #6b9670;
+  color: #f5f7f5;
+}
+
+.btn-primary-action:hover {
+  background-color: #5b8761;
+  transform: translateY(-1px);
+}
+
+.btn-secondary-action {
+  background-color: transparent;
+  border: 1px solid rgba(215, 224, 215, 0.45);
+  color: #e4ebe4;
+}
+
+.btn-secondary-action:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(215, 224, 215, 0.75);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .summary-card {
+    padding: 1.35rem 1.25rem;
+  }
+
+  .summary-row {
+    grid-template-columns: 95px 1fr;
+  }
+
+  .confirmation-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-action {
+    width: 100%;
+  }
+}

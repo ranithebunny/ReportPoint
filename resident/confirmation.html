@@ -38,6 +38,84 @@
       </span>
     </nav>
   </div>
+<main class="confirmation-page">
+    <div class="confirmation-container">
+      <div class="status-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
 
+      <h1 class="confirmation-title">Report submitted</h1>
+      <p class="confirmation-subtitle">
+        Your report has been successfully submitted and is now awaiting review by our administrators. You can track its progress anytime through the ‘Track’ page
+      </p>
+
+      <div class="report-code-box" id="confirmReportId">RP-2026-001</div>
+
+      <section class="summary-card" aria-labelledby="summaryHeading">
+        <h2 class="summary-heading" id="summaryHeading">Summary</h2>
+        <div class="summary-list">
+          <div class="summary-row">
+            <span class="summary-label">Category</span>
+            <span class="summary-value" id="confirmCategory">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Location</span>
+            <span class="summary-value" id="confirmLocation">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Severity</span>
+            <span class="summary-value" id="confirmSeverity">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Status</span>
+            <span class="summary-value">
+              <span class="status-pill" id="confirmStatus">Received</span>
+            </span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Next step</span>
+            <span class="summary-value" id="confirmNextStep">Under review by admin</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="confirmation-actions">
+        <a href="report.html" class="btn-action btn-primary-action">
+          <span>SUBMIT ANOTHER</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="track.html" class="btn-action btn-secondary-action">
+          <span>TRACK A REPORT</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | <a href="faq.html#accessibility">Accessibility</a> &nbsp;<a href="faq.html#privacy">Privacy Policy</a></p>
+    <p class="footer-contacts">
+      <span>Globe: +63 954 488 7599</span>
+      <span>Smart: +63 962 626 7420</span>
+    </p>
+  </footer>
+
+  <script src="js/resident-nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const raw = sessionStorage.getItem('latestReport');
+      if (!raw) return;
+
+      const report = JSON.parse(raw);
+      document.getElementById('confirmReportId').textContent = report.report_id;
+      document.getElementById('confirmCategory').textContent = report.category;
+      document.getElementById('confirmLocation').textContent = report.location;
+      document.getElementById('confirmSeverity').textContent = report.severity;
+      document.getElementById('confirmStatus').textContent   = report.status;
+      document.getElementById('confirmNextStep').textContent = report.next_step;
+    });
+  </script>
 </body>
 </html>
