@@ -1,5 +1,19 @@
 <?php
+ini_set('display_errors', '0');
 header('Content-Type: application/json');
+
+session_start();
+$sessionResidentId = $_SESSION['resident_id'] ?? null;
+session_write_close();
+
+if (!$sessionResidentId) {
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'error' => 'You must be signed in to view your report history.'
+    ]);
+    exit;
+}
 
 if (file_exists(__DIR__ . '/../.env')) {
     foreach (file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
@@ -21,6 +35,7 @@ try {
     ]);
 
     $q = trim($_GET['q'] ?? '');
+    $residentId = (int) $sessionResidentId;
 
     $sql = "
         SELECT
@@ -38,10 +53,13 @@ try {
         LEFT JOIN categories c ON r.category_id = c.category_id
         LEFT JOIN priorities p ON r.priority_id = p.priority_id
         LEFT JOIN residents res ON r.resident_id = res.resident_id
-        WHERE 1=1
+        WHERE r.resident_id = :resident_id
     ";
 
-    $params = [];
+    $params = [
+        ':resident_id' => $residentId
+    ];
+
     if ($q !== '') {
         $sql .= " AND (
             r.report_code ILIKE :q
