@@ -56,7 +56,7 @@ try {
             r.report_code AS id,
             r.title,
             r.location,
-            r.created_at AS submittedAt,
+            r.created_at AS \"submittedAt\",
             s.name AS status,
             p.name AS priority
         FROM reports r
