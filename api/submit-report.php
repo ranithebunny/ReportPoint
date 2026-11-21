@@ -1,4 +1,5 @@
 <?php
+ini_set('display_errors', '0');
 header('Content-Type: application/json');
 
 session_start();
@@ -69,13 +70,14 @@ try {
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
         }
+
         $safeName = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['evidence']['name']));
         $targetPath = $uploadDir . $safeName;
+
         if (move_uploaded_file($_FILES['evidence']['tmp_name'], $targetPath)) {
             $evidencePath = 'uploads/' . $safeName;
         }
     }
-
     $pdo->beginTransaction();
 
     $insertSql = "
