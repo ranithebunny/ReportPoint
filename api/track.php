@@ -6,15 +6,6 @@ session_start();
 $sessionResidentId = $_SESSION['resident_id'] ?? null;
 session_write_close();
 
-if (!$sessionResidentId) {
-    http_response_code(401);
-    echo json_encode([
-        'success' => false,
-        'error' => 'You must be signed in to view your report history.'
-    ]);
-    exit;
-}
-
 if (file_exists(__DIR__ . '/../.env')) {
     foreach (file(__DIR__ . '/../.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) continue;
@@ -24,6 +15,17 @@ if (file_exists(__DIR__ . '/../.env')) {
 }
 
 try {
+    $q = trim($_GET['q'] ?? '');
+
+    // Guests (not signed in) can only look up an exact report reference number
+    if (!$sessionResidentId && $q === '') {
+        echo json_encode([
+            'success' => true,
+            'reports' => []
+        ]);
+        exit;
+    }
+
     $dsn = sprintf(
         "pgsql:host=%s;port=%s;dbname=%s",
         $_ENV['DB_HOST'],
@@ -33,9 +35,6 @@ try {
     $pdo = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
-
-    $q = trim($_GET['q'] ?? '');
-    $residentId = (int) $sessionResidentId;
 
     $sql = "
         SELECT
@@ -53,21 +52,29 @@ try {
         LEFT JOIN categories c ON r.category_id = c.category_id
         LEFT JOIN priorities p ON r.priority_id = p.priority_id
         LEFT JOIN residents res ON r.resident_id = res.resident_id
-        WHERE r.resident_id = :resident_id
+        WHERE 1=1
     ";
 
-    $params = [
-        ':resident_id' => $residentId
-    ];
+    $params = [];
 
-    if ($q !== '') {
-        $sql .= " AND (
-            r.report_code ILIKE :q
-            OR r.title ILIKE :q
-            OR r.location ILIKE :q
-            OR COALESCE(res.unit, '') ILIKE :q
-        )";
-        $params[':q'] = '%' . $q . '%';
+    if ($sessionResidentId) {
+        // Signed-in resident: only show reports they submitted
+        $sql .= " AND r.resident_id = :resident_id";
+        $params[':resident_id'] = (int) $sessionResidentId;
+
+        if ($q !== '') {
+            $sql .= " AND (
+                r.report_code ILIKE :q
+                OR r.title ILIKE :q
+                OR r.location ILIKE :q
+                OR COALESCE(res.unit, '') ILIKE :q
+            )";
+            $params[':q'] = '%' . $q . '%';
+        }
+    } else {
+        // Guest: exact match on report reference code only (no wildcard browsing)
+        $sql .= " AND UPPER(r.report_code) = UPPER(:exact_code)";
+        $params[':exact_code'] = $q;
     }
 
     $sql .= " ORDER BY r.created_at DESC LIMIT 50";

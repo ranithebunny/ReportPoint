@@ -2,6 +2,8 @@
 ini_set('display_errors', '0');
 header('Content-Type: application/json');
 
+require_once __DIR__ . '/mailer.php';
+
 session_start();
 $sessionResidentId = $_SESSION['resident_id'] ?? null;
 session_write_close();
@@ -78,6 +80,7 @@ try {
             $evidencePath = 'uploads/' . $safeName;
         }
     }
+
     $pdo->beginTransaction();
 
     $insertSql = "
@@ -121,16 +124,27 @@ try {
 
     $pdo->commit();
 
+    $reportPayload = [
+        'report_id' => $reportCode,
+        'title'     => $title,
+        'category'  => $category,
+        'location'  => $location,
+        'severity'  => ucfirst($severity),
+        'status'    => 'Received',
+        'next_step' => 'Under review by admin'
+    ];
+
+    $emailSent = false;
+    try {
+        $emailSent = sendReportConfirmationEmail($email, $fullName, $reportPayload);
+    } catch (Throwable $mailErr) {
+        error_log('Report confirmation email exception: ' . $mailErr->getMessage());
+    }
+
     echo json_encode([
-        'success' => true,
-        'report' => [
-            'report_id' => $reportCode,
-            'category'  => $category,
-            'location'  => $location,
-            'severity'  => ucfirst($severity),
-            'status'    => 'Received',
-            'next_step' => 'Under review by admin'
-        ]
+        'success'    => true,
+        'email_sent' => $emailSent,
+        'report'     => $reportPayload
     ]);
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) {
