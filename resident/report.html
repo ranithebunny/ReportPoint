@@ -38,6 +38,20 @@
     </div>
   </header>
 
+<dialog id="review-dialog" class="review-modal" aria-labelledby="review-title">
+    <div class="review-modal-inner">
+      <h2 id="review-title">Review your report</h2>
+      <p class="review-sub">Please verify the details below before submitting to College Point Manila administration.</p>
+
+      <dl id="review-summary" class="review-summary-list"></dl>
+
+      <div class="review-actions">
+        <button type="button" id="review-edit-btn" class="btn-secondary">Edit Details</button>
+        <button type="button" id="review-confirm-btn" class="submit-btn">Confirm &amp; Submit</button>
+      </div>
+    </div>
+  </dialog>
+
   <main class="report-page">
     <div class="report-header">
       <p class="eyebrow">Report an Issue</p>
@@ -61,7 +75,7 @@
           <a href="login.html?next=report.html" class="submit-btn" style="display:inline-block;width:auto;padding:.85rem 1.75rem;text-decoration:none;">Sign in to Continue</a>
         </div>
 
-        <form id="report-form" action="#" method="POST" enctype="multipart/form-data" hidden>
+        <form id="report-form" action="#" method="POST" enctype="multipart/form-data" novalidate hidden>
           <div class="form-section">
             <h2 class="section-banner">Personal Information</h2>
             <div class="two-col-row">
