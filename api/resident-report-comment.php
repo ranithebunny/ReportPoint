@@ -7,7 +7,6 @@ header('Cache-Control: no-store');
 
 session_start();
 $sessionResidentId = $_SESSION['resident_id'] ?? null;
-$sessionAdminId = $_SESSION['admin_id'] ?? null;
 session_write_close();
 
 function respond(int $status, array $data): void
@@ -28,6 +27,10 @@ if (file_exists(__DIR__ . '/../.env')) {
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         respond(405, ['ok' => false, 'error' => 'Method not allowed.']);
+    }
+
+    if (!$sessionResidentId) {
+        respond(401, ['ok' => false, 'error' => 'Please sign in as a resident to post a follow-up message.']);
     }
 
     $rawBody = file_get_contents('php://input');
@@ -74,17 +77,11 @@ try {
 
     $reportId = (int)$report['report_id'];
     $authorType = 'resident';
-    $residentId = $sessionResidentId ? (int)$sessionResidentId : (int)$report['resident_id'];
+    $residentId = (int)$sessionResidentId;
     $adminId = null;
 
-    if ($sessionAdminId && !$sessionResidentId) {
-        $authorType = 'admin';
-        $residentId = null;
-        $adminId = (int)$sessionAdminId;
-    }
-
-    $kind = $authorType === 'resident' ? 'resident_reply' : 'comment';
-    $eventType = $authorType === 'resident' ? 'resident_response' : 'comment_added';
+    $kind = 'resident_reply';
+    $eventType = 'resident_response';
 
     // Check current status so a resident reply moves 'Awaiting Resident Response' back to 'Under Review'
     $curStmt = $pdo->prepare("
@@ -101,7 +98,7 @@ try {
     $newStatus = $oldStatus;
     $statusChanged = false;
 
-    if ($authorType === 'resident' && strcasecmp($oldStatus, 'Awaiting Resident Response') === 0) {
+    if (strcasecmp($oldStatus, 'Awaiting Resident Response') === 0) {
         $nextStatusStmt = $pdo->prepare("
             SELECT status_id, name
             FROM statuses

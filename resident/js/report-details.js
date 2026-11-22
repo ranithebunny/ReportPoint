@@ -94,7 +94,7 @@
         if (i < idx) li.classList.add('done');
         if (i === idx) li.classList.add('current', 'rejected');
       });
-      noteEl.textContent = 'This report was rejected. Please review the management updates below for details.';
+      noteEl.textContent = 'This report was rejected. Please review the activity history below for details.';
       return;
     }
 
@@ -296,6 +296,12 @@
           body: JSON.stringify({ id: reportId, message })
         });
         const data = await res.json();
+
+        if (res.status === 401) {
+          errorEl.innerHTML = `${esc(data.error || 'Please sign in as a resident to post a follow-up message.')} <a href="login.html">Sign in</a>`;
+          return;
+        }
+
         if (!res.ok || !data.ok) {
           throw new Error(data.error || 'Could not send message.');
         }
