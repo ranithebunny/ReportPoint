@@ -2353,3 +2353,33 @@ main.faq-page {
     margin-top: 0.25rem;
   }
 }
+
+.actor-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.actor-admin {
+  background: rgba(111, 191, 138, 0.16);
+  color: #8ee0aa;
+  border: 1px solid rgba(111, 191, 138, 0.35);
+}
+
+.actor-resident {
+  background: rgba(235, 196, 110, 0.15);
+  color: #f0cf85;
+  border: 1px solid rgba(235, 196, 110, 0.35);
+}
+
+.actor-system {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}

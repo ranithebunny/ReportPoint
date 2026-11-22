@@ -37,6 +37,20 @@
       .replace(/'/g, '&#39;');
   }
 
+  function actorBadge(actorType) {
+    const role = String(actorType || '').toLowerCase();
+    if (role === 'admin') {
+      return '<span class="actor-badge actor-admin">Admin</span>';
+    }
+    if (role === 'resident') {
+      return '<span class="actor-badge actor-resident">Resident</span>';
+    }
+    if (role === 'system') {
+      return '<span class="actor-badge actor-system">System</span>';
+    }
+    return '';
+  }
+
   function fmtDate(isoOrStr) {
     if (!isoOrStr) return '—';
     const normalized = String(isoOrStr).includes('T')
@@ -200,7 +214,7 @@
                   <span class="tl-title">${esc(heading)}</span>
                   <time>${esc(fmtDate(u.at || u.createdAt || u.created_at))}</time>
                 </div>
-                ${u.by ? `<div class="tl-meta">by ${esc(u.by)}</div>` : ''}
+                ${u.by ? `<div class="tl-meta">by ${esc(u.by)} ${actorBadge(u.actorType || u.actor_type)}</div>` : ''}
                 ${detailText ? `<div class="tl-msg" style="white-space:pre-line">${esc(detailText)}</div>` : ''}
               </li>
             `;
