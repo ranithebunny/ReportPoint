@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Report Details · ReportPoint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="ReportPoint home">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">ReportPoint</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
+
+      <div class="header-right">
+        <div class="header-contacts">
+          <span>Globe: +63 954 488 7599</span>
+          <span>Smart: +63 962 626 7420</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Resident">
+          <a href="index.html">Home</a>
+          <a href="report.html">Report</a>
+          <a href="track.html" aria-current="page">Track</a>
+          <a href="faq.html">FAQ</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <a class="back-link" href="track.html">← Back to my reports</a>
+
+    <div id="loading-state" class="card" aria-busy="true">
+      <div class="empty">
+        <strong>Loading report details…</strong>
+        Fetching the latest status and updates for this report.
+      </div>
+    </div>
+
+    <div id="not-found" class="card" hidden>
+      <div class="empty">
+        <strong>Report not found</strong>
+        This report may have been removed, or the link is incorrect.
+      </div>
+      <div class="row" style="justify-content:center;margin-top:1rem">
+        <a class="btn btn-primary btn-sm" href="track.html">View my reports</a>
+      </div>
+    </div>
+
+    <div id="report-root" hidden>
+      <div class="page-head">
+        <div>
+          <p class="eyebrow mono" id="report-code"></p>
+          <h1 id="report-title"></h1>
+          <p class="muted small" id="report-meta"></p>
+        </div>
+        <div class="row">
+          <span class="pill pill-lg" id="report-status-pill"></span>
+        </div>
+      </div>
+
+      <!-- Progress Tracker -->
+      <section class="card" aria-label="Report progress" style="margin-bottom:1.5rem">
+        <ol class="tracker" id="status-tracker">
+          <li data-step="Received">
+            <div class="node" aria-hidden="true"></div>
+            <span>Received</span>
+          </li>
+          <li data-step="Under Review">
+            <div class="node" aria-hidden="true"></div>
+            <span>Under Review</span>
+          </li>
+          <li data-step="In Progress">
+            <div class="node" aria-hidden="true"></div>
+            <span>In Progress</span>
+          </li>
+          <li data-step="Resolved">
+            <div class="node" aria-hidden="true"></div>
+            <span>Resolved</span>
+          </li>
+          <li data-step="Closed">
+            <div class="node" aria-hidden="true"></div>
+            <span>Closed</span>
+          </li>
+        </ol>
+        <p class="hint" id="tracker-note" style="text-align:center;margin-top:1rem;margin-bottom:0"></p>
+      </section>
+
+      <div class="report-layout">
+        <!-- Left column: Summary, Description, Updates -->
+        <div class="stack">
+          <section class="card" aria-labelledby="summary-h">
+            <h2 id="summary-h">Summary</h2>
+            <dl class="kv" id="report-summary"></dl>
+          </section>
+
+          <section class="card" aria-labelledby="desc-h">
+            <h2 id="desc-h">Description</h2>
+            <p id="report-description" style="white-space:pre-line;margin-bottom:0"></p>
+          </section>
+
+          <section class="card" aria-labelledby="updates-h">
+            <h2 id="updates-h">Activity History</h2>
+            <div id="public-updates"></div>
+          </section>
+        </div>
+
+        <!-- Right column: Resident follow-up note / reply -->
+        <div class="stack">
+          <section class="channel public" aria-labelledby="reply-h">
+            <div class="channel-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div>
+                <span id="reply-h">Resident notes &amp; replies</span>
+                <small>Shared with building administration</small>
+              </div>
+            </div>
+            <div class="channel-body">
+              <ul class="thread" id="resident-thread"></ul>
+
+              <form id="resident-reply-form">
+                <div class="field">
+                  <label for="reply-message">Add a follow-up message</label>
+                  <textarea
+                    id="reply-message"
+                    name="message"
+                    rows="3"
+                    maxlength="1000"
+                    placeholder="Share additional details, availability, or confirmation for building staff…"
+                    required
+                  ></textarea>
+                  <div class="error-text" id="reply-error" role="alert"></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" id="reply-submit-btn">
+                  Send update
+                </button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <script src="js/resident-nav.js"></script>
+  <script src="js/report-details.js"></script>
+</body>
+</html>

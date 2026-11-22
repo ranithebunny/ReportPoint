@@ -1,54 +1,50 @@
-document.addEventListener('DOMContentLoaded', async () => {
+(async function () {
+  const $ = (id) => document.getElementById(id);
+
+  const loadingEl = $('loading-state');
+  const notFoundEl = $('not-found');
+  const rootEl = $('report-root');
+
   const params = new URLSearchParams(window.location.search);
-  const code = (params.get('code') || params.get('id') || '').trim();
+  const reportId = (params.get('code') || params.get('id') || '').trim();
 
-  const titleEl = document.getElementById('rpTitle');
-  const codeEl = document.getElementById('rpCode');
-  const topPillEl = document.getElementById('rpTopPill');
-  const summaryPillEl = document.getElementById('rpSummaryPill');
-  const categoryEl = document.getElementById('rpCategory');
-  const locationEl = document.getElementById('rpLocation');
-  const severityEl = document.getElementById('rpSeverity');
-  const evidenceEl = document.getElementById('rpEvidence');
-  const nextStepEl = document.getElementById('rpNextStep');
-  const descriptionEl = document.getElementById('rpDescription');
-  const timelineEl = document.getElementById('rpTimeline');
-
-  const stages = ['received', 'review', 'progress', 'resolved', 'closed'];
-
-  function getStageKey(statusName) {
-    const val = (statusName || '').toLowerCase();
-    if (val.includes('review')) return 'review';
-    if (val.includes('progress') || val.includes('awaiting')) return 'progress';
-    if (val.includes('resolved')) return 'resolved';
-    if (val.includes('closed') || val.includes('rejected')) return 'closed';
-    return 'received';
+  if (!reportId) {
+    loadingEl.hidden = true;
+    notFoundEl.hidden = false;
+    return;
   }
 
-  function getPillClass(statusName) {
-    const val = (statusName || '').toLowerCase();
-    if (val.includes('progress')) return 'st-progress';
-    if (val.includes('review')) return 'st-review';
-    if (val.includes('resolved')) return 'st-resolved';
-    if (val.includes('closed')) return 'st-closed';
-    if (val.includes('rejected')) return 'st-rejected';
-    return 'st-received';
+  const EVENT_LABELS = {
+    submitted: 'Report submitted',
+    status_changed: 'Status updated',
+    priority_changed: 'Priority updated',
+    tag_added: 'Tag added',
+    tag_removed: 'Tag removed',
+    comment_added: 'Comment from management',
+    note_added: 'Note added',
+    info_requested: 'Additional information requested',
+    resident_response: 'Resident response received',
+    rejected: 'Report rejected',
+    resolved: 'Report resolved'
+  };
+
+  function esc(val) {
+    return String(val ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
-  function getNextStep(statusName) {
-    const val = (statusName || '').toLowerCase();
-    if (val.includes('review')) return 'Admin is reviewing the details';
-    if (val.includes('progress')) return 'Staff will mark it resolved once done.';
-    if (val.includes('resolved')) return 'Pending final confirmation';
-    if (val.includes('closed')) return 'Report is closed.';
-    return 'Under review by admin';
-  }
-
-  function formatDateTime(raw) {
-    if (!raw) return '';
-    const date = new Date(String(raw).replace(' ', 'T'));
-    if (Number.isNaN(date.getTime())) return String(raw);
-    return date.toLocaleString('en-US', {
+  function fmtDate(isoOrStr) {
+    if (!isoOrStr) return '—';
+    const normalized = String(isoOrStr).includes('T')
+      ? isoOrStr
+      : String(isoOrStr).replace(' ', 'T');
+    const d = new Date(normalized);
+    if (Number.isNaN(d.getTime())) return String(isoOrStr);
+    return d.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
@@ -57,107 +53,259 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function escapeHtml(value) {
-    return String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+  function statusClass(status) {
+    const s = String(status || '').toLowerCase();
+    if (s.includes('review')) return 'st-review';
+    if (s.includes('progress')) return 'st-progress';
+    if (s.includes('awaiting')) return 'st-awaiting';
+    if (s.includes('resolved')) return 'st-resolved';
+    if (s.includes('closed')) return 'st-closed';
+    if (s.includes('reject')) return 'st-rejected';
+    return 'st-received';
   }
 
-  function renderStepper(statusName) {
-    const activeIndex = stages.indexOf(getStageKey(statusName));
-    const steps = document.querySelectorAll('#rpStepper .rp-step');
+  function renderTracker(status) {
+    const steps = ['Received', 'Under Review', 'In Progress', 'Resolved', 'Closed'];
+    const items = Array.from(document.querySelectorAll('#status-tracker li'));
+    const noteEl = $('tracker-note');
+    const normalized = String(status || 'Received');
 
-    steps.forEach((step, idx) => {
-      step.classList.remove('is-done', 'is-current');
-      const circle = step.querySelector('.rp-step-circle');
+    items.forEach((li) => {
+      li.classList.remove('done', 'current', 'awaiting', 'rejected');
+    });
 
-      if (idx < activeIndex) {
-        step.classList.add('is-done');
-        if (circle) {
-          circle.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          `;
-        }
-      } else if (idx === activeIndex) {
-        step.classList.add('is-current');
-        if (circle) circle.innerHTML = '';
-      } else if (circle) {
-        circle.innerHTML = '';
+    if (/reject/i.test(normalized)) {
+      const idx = Math.max(0, steps.indexOf('Under Review'));
+      items.forEach((li, i) => {
+        if (i < idx) li.classList.add('done');
+        if (i === idx) li.classList.add('current', 'rejected');
+      });
+      noteEl.textContent = 'This report was rejected. Please review the management updates below for details.';
+      return;
+    }
+
+    const isAwaiting = /awaiting/i.test(normalized);
+    const activeStep = isAwaiting ? 'In Progress' : normalized;
+    const activeIdx = Math.max(0, steps.findIndex((st) => st.toLowerCase() === activeStep.toLowerCase()));
+
+    items.forEach((li, i) => {
+      if (i < activeIdx) {
+        li.classList.add('done');
+      } else if (i === activeIdx) {
+        li.classList.add('current');
+        if (isAwaiting) li.classList.add('awaiting');
       }
     });
+
+    if (isAwaiting) {
+      noteEl.textContent = 'Awaiting your response or additional information before work continues.';
+    } else if (normalized.toLowerCase() === 'resolved') {
+      noteEl.textContent = 'Work has been completed and marked as resolved by building administration.';
+    } else if (normalized.toLowerCase() === 'closed') {
+      noteEl.textContent = 'This report is closed.';
+    } else {
+      noteEl.textContent = `Current stage: ${normalized}.`;
+    }
   }
 
-  if (!code) {
-    titleEl.textContent = 'No Report Selected';
-    codeEl.textContent = '—';
-    timelineEl.innerHTML = '<li class="rp-timeline-empty">Select a report from the Track page to view its details.</li>';
-    return;
+  function renderReport(report) {
+    const code = report.code || report.reportCode || report.report_code || report.id || reportId;
+    const title = report.title || 'Untitled Report';
+    const status = report.status || 'Received';
+    const category = report.category || 'General';
+    const priority = report.priority || 'Medium';
+    const location = report.location || report.unit || '—';
+    const submittedAt = report.submittedAt || report.created_at;
+    const updatedAt = report.updatedAt || report.updated_at || submittedAt;
+    const description = report.description || 'No description provided.';
+    const evidenceUrl = report.evidenceUrl || report.evidence_path || '';
+    const rejectionReason =
+      report.rejectionReason ||
+      (report.rejection && report.rejection.reason) ||
+      report.rejection_reason ||
+      '';
+    const rejectionExplanation =
+      report.rejectionExplanation ||
+      (report.rejection && report.rejection.explanation) ||
+      report.rejection_explanation ||
+      '';
+
+    document.title = `${code} · ${title} · ReportPoint`;
+    $('report-code').textContent = code;
+    $('report-title').textContent = title;
+    $('report-meta').textContent = `Submitted ${fmtDate(submittedAt)} · Last updated ${fmtDate(updatedAt)}`;
+
+    const pill = $('report-status-pill');
+    pill.textContent = status;
+    pill.className = `pill pill-lg ${statusClass(status)}`;
+
+    renderTracker(status);
+    if (/reject/i.test(status) && rejectionReason) {
+      $('tracker-note').textContent = `This report was rejected — Reason: ${rejectionReason}.`;
+    }
+
+    $('report-summary').innerHTML = `
+      <dt>Report ID</dt>
+      <dd class="mono">${esc(code)}</dd>
+      <dt>Category</dt>
+      <dd>${esc(category)}</dd>
+      <dt>Location</dt>
+      <dd>${esc(location)}</dd>
+      <dt>Priority</dt>
+      <dd><span class="prio prio-${esc(priority)}">${esc(priority)}</span></dd>
+      <dt>Submitted</dt>
+      <dd>${esc(fmtDate(submittedAt))}</dd>
+      <dt>Evidence</dt>
+      <dd>${
+        evidenceUrl
+          ? `<a href="${esc(evidenceUrl)}" target="_blank" rel="noopener noreferrer">View file</a>`
+          : '<span class="muted">None attached</span>'
+      }</dd>
+      ${
+        rejectionReason
+          ? `<dt>Rejection</dt><dd>${esc(rejectionReason)}</dd>`
+          : ''
+      }
+    `;
+
+    $('report-description').textContent = description;
+
+    const updates = Array.isArray(report.updates) ? report.updates : [];
+    const fallbackRejectionNote =
+      !updates.length && /reject/i.test(status) && (rejectionReason || rejectionExplanation)
+        ? [{
+            title: 'Report rejected',
+            reason: rejectionReason,
+            message: rejectionExplanation,
+            at: updatedAt
+          }]
+        : [];
+    const displayUpdates = updates.length ? updates : fallbackRejectionNote;
+
+    $('public-updates').innerHTML = displayUpdates.length
+      ? `<ul class="timeline">
+          ${displayUpdates.map((u) => {
+            const heading =
+              u.title ||
+              (u.from && u.to ? `${u.from} → ${u.to}` : EVENT_LABELS[u.type] || u.type || 'Update');
+            const detailText = [
+              u.reason ? `Reason: ${u.reason}` : '',
+              u.message || u.note || ''
+            ].filter(Boolean).join('\n');
+
+            return `
+              <li>
+                <span class="dot" aria-hidden="true"></span>
+                <div class="tl-head">
+                  <span class="tl-title">${esc(heading)}</span>
+                  <time>${esc(fmtDate(u.at || u.createdAt || u.created_at))}</time>
+                </div>
+                ${u.by ? `<div class="tl-meta">by ${esc(u.by)}</div>` : ''}
+                ${detailText ? `<div class="tl-msg" style="white-space:pre-line">${esc(detailText)}</div>` : ''}
+              </li>
+            `;
+          }).join('')}
+        </ul>`
+      : `<div class="empty">
+          <strong>No activity recorded yet</strong>
+          Activity on your report will appear here as it progresses.
+        </div>`;
+
+    const messages = Array.isArray(report.comments) ? report.comments : [];
+
+    $('resident-thread').innerHTML = messages.length
+      ? messages.map((m) => `
+          <li class="msg">
+            <div>${esc(m.text || m.message || m.body || '')}</div>
+            <div class="msg-meta">
+              <span>${esc(m.author || m.sender || 'Resident')}</span>
+              <time>${esc(fmtDate(m.at || m.createdAt || m.created_at))}</time>
+            </div>
+          </li>
+        `).join('')
+      : `<li class="thread-empty">No follow-up messages yet.</li>`;
   }
 
   try {
-    const response = await fetch(`../api/report-details.php?code=${encodeURIComponent(code)}`, {
-      cache: 'no-store'
-    });
-    const data = await response.json();
+    const res = await fetch(
+      `../api/resident-report-details.php?id=${encodeURIComponent(reportId)}`,
+      { credentials: 'same-origin', cache: 'no-store' }
+    );
 
-    if (!response.ok || !data.success || !data.report) {
-      throw new Error(data.error || 'Report could not be loaded.');
+    if (res.status === 404) {
+      loadingEl.hidden = true;
+      notFoundEl.hidden = false;
+      return;
     }
 
-    const report = data.report;
-    const statusText = report.status_name || 'Received';
-    const pillClass = getPillClass(statusText);
+    const data = await res.json();
+    const report = data.report || (data.ok && data.data ? data.data : null);
 
-    titleEl.textContent = report.title || 'Untitled Report';
-    codeEl.textContent = report.report_code || code;
-
-    topPillEl.textContent = statusText;
-    topPillEl.className = `rp-status-pill ${pillClass}`;
-
-    summaryPillEl.textContent = statusText;
-    summaryPillEl.className = `rp-status-pill ${pillClass}`;
-
-    categoryEl.textContent = report.category_name || '—';
-    locationEl.textContent = report.location || '—';
-    severityEl.textContent = report.priority_name || '—';
-    nextStepEl.textContent = getNextStep(statusText);
-    descriptionEl.textContent = report.description || 'No description provided.';
-
-    if (report.evidence_path) {
-      evidenceEl.innerHTML = `<a href="${escapeHtml(report.evidence_path)}" target="_blank" rel="noopener">View file</a>`;
-    } else {
-      evidenceEl.textContent = 'None';
+    if (!res.ok || !data.ok || !report) {
+      throw new Error(data.error || 'Failed to load report details.');
     }
 
-    renderStepper(statusText);
-
-    const entries = Array.isArray(data.history) && data.history.length
-      ? data.history
-      : [{
-          status_name: statusText,
-          message: 'Your report has been received.',
-          created_at: report.created_at
-        }];
-
-    timelineEl.innerHTML = entries.map((entry, idx) => {
-      const dotClass = idx === 0 ? 'rp-tl-dot is-latest' : 'rp-tl-dot';
-      return `
-        <li class="rp-timeline-item">
-          <span class="${dotClass}" aria-hidden="true"></span>
-          <div>
-            <div class="rp-tl-heading">${escapeHtml(entry.status_name || statusText)}</div>
-            <p class="rp-tl-message">${escapeHtml(entry.message || '')}</p>
-          </div>
-          <time class="rp-tl-time">${escapeHtml(formatDateTime(entry.created_at))}</time>
-        </li>
-      `;
-    }).join('');
+    loadingEl.hidden = true;
+    rootEl.hidden = false;
+    renderReport(report);
   } catch (err) {
-    titleEl.textContent = 'Unable to Load Report';
-    timelineEl.innerHTML = `<li class="rp-timeline-empty">${escapeHtml(err.message)}</li>`;
+    console.error('Error loading resident report details:', err);
+    loadingEl.hidden = true;
+    notFoundEl.hidden = false;
+    notFoundEl.querySelector('strong').textContent = 'Unable to load report';
+    notFoundEl.querySelector('.empty').lastChild.textContent =
+      'Please refresh the page or return to your reports list.';
   }
-});
+
+  const form = $('resident-reply-form');
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const textarea = $('reply-message');
+      const errorEl = $('reply-error');
+      const submitBtn = $('reply-submit-btn');
+      const message = textarea.value.trim();
+
+      errorEl.textContent = '';
+      if (!message) {
+        errorEl.textContent = 'Please enter a message before sending.';
+        textarea.focus();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const res = await fetch('../api/resident-report-comment.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ id: reportId, message })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || 'Could not send message.');
+        }
+
+        const ul = $('resident-thread');
+        const emptyPlaceholder = ul.querySelector('.thread-empty');
+        if (emptyPlaceholder) emptyPlaceholder.remove();
+
+        const li = document.createElement('li');
+        li.className = 'msg';
+        li.innerHTML = `
+          <div>${esc(message)}</div>
+          <div class="msg-meta">
+            <span>You</span>
+            <time>${esc(fmtDate(new Date().toISOString()))}</time>
+          </div>
+        `;
+        ul.appendChild(li);
+        textarea.value = '';
+      } catch (err) {
+        errorEl.textContent = err.message || 'Failed to send message.';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  }
+})();
