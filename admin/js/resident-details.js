@@ -1,3 +1,32 @@
+(function syncBackLinkImmediately() {
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from');
+  const reportId = params.get('reportId');
+  const backLink = document.querySelector('.back-link');
+
+  if (!backLink) return;
+
+  if (from === 'dashboard') {
+    backLink.href = 'dashboard.html';
+    backLink.textContent = '← Back to dashboard';
+  } else if (from === 'report' && reportId) {
+    backLink.href = 'report.html?id=' + encodeURIComponent(reportId);
+    backLink.textContent = '← Back to report';
+  } else if (document.referrer) {
+    try {
+      const refUrl = new URL(document.referrer);
+      if (refUrl.origin === window.location.origin) {
+        if (refUrl.pathname.endsWith('/admin/dashboard.html')) {
+          backLink.href = 'dashboard.html';
+          backLink.textContent = '← Back to dashboard';
+        } else if (refUrl.pathname.endsWith('/admin/report.html')) {
+          backLink.href = refUrl.pathname + refUrl.search;
+          backLink.textContent = '← Back to report';
+        }
+      }
+    } catch (_) {}
+  }
+})();
 
 (async function () {
   const admin = await UI.init({
@@ -11,9 +40,11 @@
   const root = $('root');
   const notFound = $('not-found');
   const skeleton = $('loading-skeleton');
-  const residentId = new URLSearchParams(window.location.search).get('id');
 
-  if (!residentId || !/^\d+$/.test(residentId)) {
+  const params = new URLSearchParams(window.location.search);
+  const residentId = (params.get('id') || '').trim();
+
+  if (!residentId || !/^(?:\d+|CP-\d+)$/i.test(residentId)) {
     skeleton.hidden = true;
     notFound.hidden = false;
     return;

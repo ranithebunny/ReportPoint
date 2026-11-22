@@ -45,55 +45,74 @@ try {
         ]);
     }
 
-    $id = filter_var(
-        $_GET['id'] ?? null,
-        FILTER_VALIDATE_INT
-    );
+    $rawId = trim((string)($_GET['id'] ?? ''));
 
-    if (!$id || $id < 1) {
+    if ($rawId === '') {
         respond(400, ['ok' => false, 'error' => 'Invalid resident ID.']);
     }
 
-    // Load the resident's account information with quoted camelCase aliases.
-    $residentStmt = $pdo->prepare(
-        'SELECT
-            resident_id AS id,
-            resident_code AS "residentId",
-            full_name AS name,
-            unit,
-            email,
-            phone,
-            is_active AS active,
-            created_at AS "createdAt"
-         FROM residents
-         WHERE resident_id = ?
-         LIMIT 1'
-    );
-    $residentStmt->execute([$id]);
+    $numericId = filter_var($rawId, FILTER_VALIDATE_INT);
+
+    // Load the resident's account information by numeric ID or resident code.
+    if ($numericId !== false && $numericId >= 1) {
+        $residentStmt = $pdo->prepare(
+            'SELECT
+                resident_id AS id,
+                resident_code AS "residentId",
+                full_name AS name,
+                unit,
+                email,
+                phone,
+                is_active AS active,
+                created_at AS "createdAt"
+             FROM residents
+             WHERE resident_id = ?
+             LIMIT 1'
+        );
+        $residentStmt->execute([$numericId]);
+    } else {
+        $residentStmt = $pdo->prepare(
+            'SELECT
+                resident_id AS id,
+                resident_code AS "residentId",
+                full_name AS name,
+                unit,
+                email,
+                phone,
+                is_active AS active,
+                created_at AS "createdAt"
+             FROM residents
+             WHERE resident_code = ?
+             LIMIT 1'
+        );
+        $residentStmt->execute([$rawId]);
+    }
+
     $resident = $residentStmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$resident) {
         respond(404, ['ok' => false, 'error' => 'Resident not found.']);
     }
 
-    $resident['id'] = (string)$resident['id'];
+    $residentId = (int)$resident['id'];
+    $resident['id'] = (string)$residentId;
     $resident['active'] = (bool)$resident['active'];
 
     // Load only reports submitted by this resident.
     $reportsStmt = $pdo->prepare(
-        "SELECT
+        'SELECT
             r.report_code AS id,
             r.title,
-            COALESCE(s.name, 'Received') AS status,
-            COALESCE(p.name, 'Medium') AS priority,
-            r.created_at AS submittedAt
+            COALESCE(s.name, \'Received\') AS status,
+            COALESCE(p.name, \'Medium\') AS priority,
+            r.created_at AS "submittedAt"
          FROM reports r
          LEFT JOIN statuses s ON s.status_id = r.status_id
          LEFT JOIN priorities p ON p.priority_id = r.priority_id
          WHERE r.resident_id = ?
-         ORDER BY r.created_at DESC"
+         ORDER BY r.created_at DESC'
     );
-    $reportsStmt->execute([$id]);
+    $reportsStmt->execute([$residentId]);
     $resident['reports'] = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
 
     respond(200, [
