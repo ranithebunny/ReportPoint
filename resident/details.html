@@ -3,41 +3,142 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ReportPoint · details</title>
-  <!-- Vinnie: Resident Interface page. Copy admin/css/theme.css to resident/css/ so colors match. -->
+  <title>ReportPoint · Report Details</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="../css/theme.css"> 
-<link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="css/report-details.css">
+  <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
 </head>
-<body>
+<body class="report-body">
   <!-- TODO (Vinnie): details page -->
-       <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-      </span>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="ReportPoint home">
+        <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+        <span class="brand-divider"></span>
+        <span class="brand-name">ReportPoint</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav">☰</button>
+
+      <div class="header-right">
+        <div class="header-contacts">
+          <span>Globe: +63 954 488 7599</span>
+          <span>Smart: +63 962 626 7420</span>
+        </div>
+        <nav class="nav" id="nav" aria-label="Resident">
+          <a href="index.html">Home</a>
+          <a href="report.html">Report</a>
+          <a href="track.html" aria-current="page">Track</a>
+          <a href="faq.html">FAQ</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="report-page rp-details-page">
+    <a href="track.html" class="rp-back-link">
+      <span aria-hidden="true">&larr;</span>
+      <span>BACK TO MY REPORTS</span>
     </a>
 
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
+    <section class="rp-details-hero" aria-label="Report header">
+      <p class="rp-details-eyebrow">REPORT DETAILS</p>
+      <h1 class="rp-details-title" id="rpTitle">Loading report...</h1>
 
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="index.html">Home</a>
-      <a href="report.html">Report</a>
-      <a href="track.html">Track</a>
-      <a href="faq.html">FAQ</a>
+      <div class="rp-details-badges">
+        <span class="rp-status-pill st-progress" id="rpTopPill">In Progress</span>
+        <div class="rp-code-box" id="rpCode">RP-2026-001</div>
+      </div>
+    </section>
 
-      <span class="nav-user">
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
-  </div>
+    <hr class="rp-details-rule">
 
+    <section class="rp-stepper-section" aria-label="Report status progress">
+      <ol class="rp-stepper" id="rpStepper">
+        <li class="rp-step" data-stage="received">
+          <div class="rp-step-circle" aria-hidden="true"></div>
+          <span class="rp-step-label">Received</span>
+        </li>
+        <li class="rp-step" data-stage="review">
+          <div class="rp-step-circle" aria-hidden="true"></div>
+          <span class="rp-step-label">Under Review</span>
+        </li>
+        <li class="rp-step" data-stage="progress">
+          <div class="rp-step-circle" aria-hidden="true"></div>
+          <span class="rp-step-label">In Progress</span>
+        </li>
+        <li class="rp-step" data-stage="resolved">
+          <div class="rp-step-circle" aria-hidden="true"></div>
+          <span class="rp-step-label">Resolved</span>
+        </li>
+        <li class="rp-step" data-stage="closed">
+          <div class="rp-step-circle" aria-hidden="true"></div>
+          <span class="rp-step-label">Closed</span>
+        </li>
+      </ol>
+    </section>
+
+    <div class="rp-details-layout">
+      <section class="rp-panel rp-history-panel" aria-labelledby="rpHistoryHeading">
+        <h2 class="rp-panel-title" id="rpHistoryHeading">History</h2>
+        <ol class="rp-timeline" id="rpTimeline">
+          <li class="rp-timeline-empty">Loading history...</li>
+        </ol>
+      </section>
+
+      <div class="rp-right-column">
+        <section class="rp-panel rp-summary-panel" aria-labelledby="rpSummaryHeading">
+          <h2 class="rp-panel-title" id="rpSummaryHeading">Summary</h2>
+          <dl class="rp-summary-list">
+            <div class="rp-summary-row">
+              <dt>Category</dt>
+              <dd id="rpCategory">—</dd>
+            </div>
+            <div class="rp-summary-row">
+              <dt>Location</dt>
+              <dd id="rpLocation">—</dd>
+            </div>
+            <div class="rp-summary-row">
+              <dt>Severity</dt>
+              <dd id="rpSeverity">—</dd>
+            </div>
+            <div class="rp-summary-row">
+              <dt>Evidence</dt>
+              <dd id="rpEvidence">—</dd>
+            </div>
+            <div class="rp-summary-row">
+              <dt>Status</dt>
+              <dd><span class="rp-status-pill st-progress" id="rpSummaryPill">In Progress</span></dd>
+            </div>
+            <div class="rp-summary-row">
+              <dt>Next step</dt>
+              <dd id="rpNextStep">—</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="rp-panel rp-description-panel" aria-labelledby="rpDescHeading">
+          <h2 class="rp-panel-title" id="rpDescHeading">Description</h2>
+          <p class="rp-description-body" id="rpDescription">—</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 ReportPoint · Group SoHo · for College Point Manila residents | <a href="faq.html#accessibility">Accessibility</a> &nbsp;<a href="faq.html#privacy">Privacy Policy</a></p>
+    <p class="footer-contacts">
+      <span>Globe: +63 954 488 7599</span>
+      <span>Smart: +63 962 626 7420</span>
+    </p>
+  </footer>
+
+  <script src="js/resident-nav.js"></script>
+  <script src="js/report-details.js"></script>
 </body>
 </html>
