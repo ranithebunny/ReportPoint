@@ -2,7 +2,7 @@
 
 ReportPoint is a complete web-based resident reporting and management platform for the College Point community. Residents can submit and track reports, while administrators can manage reports and resident records from a dedicated dashboard.
 
-**Live website:** https://reportpoint.onrender.com/resident/index.html
+**Live website:** https://reportpoint.onrender.com
 
 ## Features
 
