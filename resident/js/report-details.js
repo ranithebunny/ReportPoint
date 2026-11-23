@@ -14,6 +14,8 @@
     return;
   }
 
+  let currentReport = null;
+
   const EVENT_LABELS = {
     submitted: 'Report submitted',
     status_changed: 'Status updated',
@@ -78,6 +80,34 @@
     return 'st-received';
   }
 
+  function updateReplyAvailability(status) {
+    const form = $('resident-reply-form');
+    if (!form) return;
+
+    const lower = String(status || '').toLowerCase();
+    const isLocked = lower === 'closed' || lower === 'rejected';
+    let closedNotice = $('reply-closed-notice');
+
+    if (isLocked) {
+      form.hidden = true;
+      if (!closedNotice) {
+        closedNotice = document.createElement('div');
+        closedNotice.id = 'reply-closed-notice';
+        closedNotice.className = 'thread-empty';
+        closedNotice.style.marginTop = '12px';
+        form.insertAdjacentElement('afterend', closedNotice);
+      }
+      closedNotice.textContent =
+        lower === 'rejected'
+          ? 'Replies are closed because this report was rejected.'
+          : 'Replies are closed because this report is now closed.';
+      closedNotice.hidden = false;
+    } else {
+      form.hidden = false;
+      if (closedNotice) closedNotice.hidden = true;
+    }
+  }
+
   function renderTracker(status) {
     const steps = ['Received', 'Under Review', 'In Progress', 'Resolved', 'Closed'];
     const items = Array.from(document.querySelectorAll('#status-tracker li'));
@@ -114,15 +144,87 @@
     if (isAwaiting) {
       noteEl.textContent = 'Awaiting your response or additional information before work continues.';
     } else if (normalized.toLowerCase() === 'resolved') {
-      noteEl.textContent = 'Work has been completed and marked as resolved by building administration.';
+      noteEl.innerHTML = `
+        <div>Work has been completed and marked as resolved by building administration.</div>
+        <div style="margin-top:12px;">
+          <button type="button" id="confirm-close-btn" class="btn" style="padding:8px 18px;border-radius:999px;font-weight:600;cursor:pointer;">
+            Confirm &amp; Close Report
+          </button>
+          <span id="confirm-close-error" style="display:block;margin-top:6px;color:#f5a3a3;font-size:13px;"></span>
+        </div>
+      `;
+
+      const confirmBtn = $('confirm-close-btn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', handleConfirmClose);
+      }
     } else if (normalized.toLowerCase() === 'closed') {
-      noteEl.textContent = 'This report is closed.';
+      noteEl.textContent = 'You confirmed the resolution. This report is now closed.';
     } else {
       noteEl.textContent = `Current stage: ${normalized}.`;
     }
   }
 
+  async function handleConfirmClose() {
+    const btn = $('confirm-close-btn');
+    const errEl = $('confirm-close-error');
+    if (!btn) return;
+
+    if (errEl) errEl.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Closing...';
+
+    try {
+      const res = await fetch('../api/resident-close-report.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ id: reportId })
+      });
+      const data = await res.json();
+
+      if (res.status === 401) {
+        if (errEl) {
+          errEl.innerHTML = `${esc(data.error || 'Please sign in as a resident to confirm closure.')} <a href="login.html">Sign in</a>`;
+        }
+        btn.disabled = false;
+        btn.textContent = 'Confirm & Close Report';
+        return;
+      }
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Could not close report.');
+      }
+
+      const newStatus = data.status || 'Closed';
+      const pill = $('report-status-pill');
+      pill.textContent = newStatus;
+      pill.className = `pill pill-lg ${statusClass(newStatus)}`;
+
+      renderTracker(newStatus);
+      updateReplyAvailability(newStatus);
+
+      if (currentReport) {
+        currentReport.status = newStatus;
+        currentReport.updates = Array.isArray(currentReport.updates) ? currentReport.updates : [];
+        currentReport.updates.unshift({
+          title: 'Resolved → Closed',
+          message: 'Resident confirmed resolution and closed the report.',
+          by: 'You',
+          actorType: 'resident',
+          at: new Date().toISOString()
+        });
+        renderReport(currentReport);
+      }
+    } catch (err) {
+      if (errEl) errEl.textContent = err.message || 'Failed to close report.';
+      btn.disabled = false;
+      btn.textContent = 'Confirm & Close Report';
+    }
+  }
+
   function renderReport(report) {
+    currentReport = report;
     const code = report.code || report.reportCode || report.report_code || report.id || reportId;
     const title = report.title || 'Untitled Report';
     const status = report.status || 'Received';
@@ -157,6 +259,8 @@
     if (/reject/i.test(status) && rejectionReason) {
       $('tracker-note').textContent = `This report was rejected — Reason: ${rejectionReason}.`;
     }
+
+    updateReplyAvailability(status);
 
     $('report-summary').innerHTML = `
       <dt>Report ID</dt>

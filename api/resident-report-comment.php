@@ -83,7 +83,7 @@ try {
     $kind = 'resident_reply';
     $eventType = 'resident_response';
 
-    // Check current status so a resident reply moves 'Awaiting Resident Response' back to 'Under Review'
+    // Check current status
     $curStmt = $pdo->prepare("
         SELECT r.status_id, s.name AS status_name
         FROM reports r
@@ -95,6 +95,10 @@ try {
     $cur = $curStmt->fetch(PDO::FETCH_ASSOC);
 
     $oldStatus = $cur['status_name'] ?? '';
+    if (in_array(strtolower($oldStatus), ['closed', 'rejected'], true)) {
+        respond(403, ['ok' => false, 'error' => 'Replies are closed for this report.']);
+    }
+
     $newStatus = $oldStatus;
     $statusChanged = false;
 
