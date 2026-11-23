@@ -22,6 +22,86 @@ if (file_exists(__DIR__ . '/../.env')) {
     }
 }
 
+function uploadEvidenceToSupabase(array $file): ?string
+{
+    $supabaseUrl = rtrim((string)($_ENV['SUPABASE_URL'] ?? getenv('SUPABASE_URL') ?: ''), '/');
+    $serviceKey  = (string)($_ENV['SUPABASE_SERVICE_ROLE_KEY'] ?? getenv('SUPABASE_SERVICE_ROLE_KEY') ?: '');
+    $bucket      = trim((string)($_ENV['SUPABASE_EVIDENCE_BUCKET'] ?? getenv('SUPABASE_EVIDENCE_BUCKET') ?: 'report-evidence'), '/');
+
+    if ($supabaseUrl === '' || $serviceKey === '') {
+        error_log('Supabase Storage env vars missing.');
+        return null;
+    }
+
+    if (empty($file['name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        if (!empty($file['error']) && $file['error'] !== UPLOAD_ERR_NO_FILE) {
+            error_log('Evidence upload error code: ' . $file['error']);
+        }
+        return null;
+    }
+
+    $maxBytes = 10 * 1024 * 1024;
+    if (!empty($file['size']) && (int)$file['size'] > $maxBytes) {
+        error_log('Evidence file exceeded 10MB limit.');
+        return null;
+    }
+
+    $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
+    $cleanBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo((string)$file['name'], PATHINFO_FILENAME));
+    $cleanBase = trim((string)$cleanBase, '_');
+    if ($cleanBase === '') {
+        $cleanBase = 'evidence';
+    }
+
+    $objectPath = date('Y/m/') . time() . '_' . bin2hex(random_bytes(4)) . '_' . $cleanBase . ($ext ? '.' . $ext : '');
+    $mimeType = mime_content_type($file['tmp_name']) ?: ($file['type'] ?: 'application/octet-stream');
+    $fileBytes = file_get_contents($file['tmp_name']);
+
+    if ($fileBytes === false) {
+        error_log('Could not read uploaded temp file.');
+        return null;
+    }
+
+    $encodedObjectPath = str_replace('%2F', '/', rawurlencode($objectPath));
+    $uploadUrl = sprintf(
+        '%s/storage/v1/object/%s/%s',
+        $supabaseUrl,
+        rawurlencode($bucket),
+        $encodedObjectPath
+    );
+
+    $ch = curl_init($uploadUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_CUSTOMREQUEST  => 'POST',
+        CURLOPT_POSTFIELDS     => $fileBytes,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 20,
+        CURLOPT_HTTPHEADER     => [
+            'Authorization: Bearer ' . $serviceKey,
+            'apikey: ' . $serviceKey,
+            'Content-Type: ' . $mimeType,
+            'x-upsert: true',
+        ],
+    ]);
+
+    $responseBody = curl_exec($ch);
+    $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr = curl_error($ch);
+    curl_close($ch);
+
+    if ($curlErr !== '' || $httpCode < 200 || $httpCode >= 300) {
+        error_log("Supabase Storage upload failed (HTTP {$httpCode}): {$curlErr} {$responseBody}");
+        return null;
+    }
+
+    return sprintf(
+        '%s/storage/v1/object/public/%s/%s',
+        $supabaseUrl,
+        rawurlencode($bucket),
+        $encodedObjectPath
+    );
+}
+
 try {
     $dsn = sprintf(
         "pgsql:host=%s;port=%s;dbname=%s",
@@ -67,18 +147,8 @@ try {
     $residentId = (int) $sessionResidentId;
 
     $evidencePath = null;
-    if (!empty($_FILES['evidence']['name']) && $_FILES['evidence']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../uploads/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true);
-        }
-
-        $safeName = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['evidence']['name']));
-        $targetPath = $uploadDir . $safeName;
-
-        if (move_uploaded_file($_FILES['evidence']['tmp_name'], $targetPath)) {
-            $evidencePath = 'uploads/' . $safeName;
-        }
+    if (!empty($_FILES['evidence']['name'])) {
+        $evidencePath = uploadEvidenceToSupabase($_FILES['evidence']);
     }
 
     $pdo->beginTransaction();

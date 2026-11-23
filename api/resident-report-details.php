@@ -138,6 +138,11 @@ try {
     }
     unset($h);
 
+    $rawEvidence = trim((string)($row['evidence_path'] ?? ''));
+    if ($rawEvidence !== '' && !preg_match('#^(https?://|\.\./)#i', $rawEvidence)) {
+        $rawEvidence = '../' . ltrim($rawEvidence, '/');
+    }
+
     $report = [
         'id' => $row['report_code'],
         'code' => $row['report_code'],
@@ -152,7 +157,7 @@ try {
         'unit' => $row['unit'],
         'submittedAt' => $row['created_at'],
         'updatedAt' => $row['updated_at'] ?: $row['created_at'],
-        'evidenceUrl' => $row['evidence_path'] ?: '',
+        'evidenceUrl' => $rawEvidence,
         'rejectionReason' => $row['rejection_reason'] ?: '',
         'rejectionExplanation' => $row['rejection_explanation'] ?: '',
         'rejection' => ($row['rejection_reason'] || $row['rejection_explanation']) ? [
