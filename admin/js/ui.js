@@ -10,14 +10,28 @@ const UI = (() => {
   /** Escape user text before putting it in innerHTML (prevents XSS). */
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function parseIso(iso) {
+    if (!iso) return new Date(NaN);
+    let str = String(iso).trim().replace(' ', 'T');
+    if (!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(str)) {
+      str += 'Z';
+    }
+    return new Date(str);
+  }
+
   function fmtDateTime(iso) {
-    const d = new Date(iso); if (isNaN(d)) return '';
+    const d = parseIso(iso); if (isNaN(d)) return '';
     let h = d.getHours(); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
     return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · ${h}:${String(d.getMinutes()).padStart(2, '0')} ${ap}`;
   }
-  function fmtDate(iso) { const d = new Date(iso); return isNaN(d) ? '' : `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`; }
+  function fmtDate(iso) {
+    const d = parseIso(iso); return isNaN(d) ? '' : `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }
   function timeAgo(iso) {
-    const mins = Math.round((Date.now() - new Date(iso)) / 60000);
+    const d = parseIso(iso);
+    if (isNaN(d)) return '';
+    const mins = Math.max(0, Math.round((Date.now() - d.getTime()) / 60000));
     if (mins < 1) return 'just now';
     if (mins < 60) return mins + ' min ago';
     if (mins < 1440) return Math.round(mins / 60) + ' hr ago';
@@ -335,7 +349,7 @@ const UI = (() => {
   };
   function historyHTML(history) {
     if (!history.length) return emptyState('No activity yet', 'Events will appear here as the report is handled.');
-    const items = [...history].sort((a, b) => new Date(b.at) - new Date(a.at)).map((h) => {
+   const items = [...history].sort((a, b) => parseIso(b.at) - parseIso(a.at)).map((h) => {
       let title = EVENT_TITLE[h.type] || h.type;
       if (h.type === 'status_changed' && h.from === 'Received' && h.to === 'Under Review') title = 'Report reviewed';
       let change = '';
