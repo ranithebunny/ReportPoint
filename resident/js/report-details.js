@@ -53,14 +53,19 @@
     return '';
   }
 
-  function fmtDate(isoOrStr) {
+function fmtDate(isoOrStr) {
     if (!isoOrStr) return '—';
-    const normalized = String(isoOrStr).includes('T')
-      ? isoOrStr
-      : String(isoOrStr).replace(' ', 'T');
+    let normalized = String(isoOrStr).trim();
+    if (!normalized.includes('T')) {
+      normalized = normalized.replace(' ', 'T');
+    }
+    if (!/(Z|[+-]\d{2}:?\d{2})$/i.test(normalized)) {
+      normalized += 'Z';
+    }
     const d = new Date(normalized);
     if (Number.isNaN(d.getTime())) return String(isoOrStr);
     return d.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila',
       month: 'short',
       day: 'numeric',
       year: 'numeric',
