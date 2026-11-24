@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const dateObservedInput = document.getElementById('dateObserved');
   const evidenceInput = document.getElementById('evidence');
 
+  const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
+  const ALLOWED_EVIDENCE_EXTS = ['jpg', 'jpeg', 'png', 'mp4'];
+  const ALLOWED_EVIDENCE_MIMES = ['image/jpeg', 'image/png', 'video/mp4'];
+
   function showFormState() {
     if (authGate) authGate.hidden = true;
     if (reportForm) reportForm.hidden = false;
@@ -109,6 +113,33 @@ document.addEventListener('DOMContentLoaded', async () => {
       field.style.borderColor = '';
       field.removeAttribute('aria-invalid');
     }
+  }
+
+  function getEvidenceValidationError(file) {
+    if (!file) return '';
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const mime = (file.type || '').toLowerCase();
+
+    if (!ALLOWED_EVIDENCE_EXTS.includes(ext) || (mime && !ALLOWED_EVIDENCE_MIMES.includes(mime))) {
+      return 'Only JPG, PNG, or MP4 files are allowed.';
+    }
+    if (file.size > MAX_EVIDENCE_BYTES) {
+      return 'Attachment exceeds the 10MB maximum limit.';
+    }
+    return '';
+  }
+
+  if (evidenceInput) {
+    evidenceInput.addEventListener('change', () => {
+      const file = evidenceInput.files?.[0];
+      const msg = getEvidenceValidationError(file);
+      if (msg) {
+        evidenceInput.value = '';
+        setFieldError(evidenceInput, msg);
+      } else {
+        setFieldError(evidenceInput, '');
+      }
+    });
   }
 
   const requiredMessages = {
@@ -275,8 +306,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const file = evidenceInput?.files?.[0];
-    if (file && file.size > 10 * 1024 * 1024) {
-      showFormError('Attachment exceeds the 10MB maximum limit.');
+    const evidenceError = getEvidenceValidationError(file);
+    if (evidenceError) {
+      if (evidenceInput) {
+        evidenceInput.value = '';
+        setFieldError(evidenceInput, evidenceError);
+      }
+      showFormError(evidenceError);
       return;
     }
 

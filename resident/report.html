@@ -149,11 +149,12 @@
                 </div>
               </div>
             </div>
-           <div class="form-group">
+              <div class="form-group">
               <label for="evidence">Photo / Video Evidence <span class="optional">(optional)</span></label>
               <div class="upload-box">
-                <input type="file" id="evidence" name="evidence" accept="image/*,video/*">
-                <p class="upload-hint">JPG, PNG, or MP4 (max 10MB)</p>
+                <input type="file" id="evidence" name="evidence" accept=".jpg,.jpeg,.png,.mp4,image/jpeg,image/png,video/mp4">
+                <p class="upload-hint">JPG, JPEG,PNG, or MP4 (max 10MB)</p>
+                <p id="evidence-error" class="field-error" role="alert" hidden></p>
               </div>
             </div>
           </div>
