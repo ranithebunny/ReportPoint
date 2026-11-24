@@ -3,7 +3,7 @@ function showDashboardSkeleton() {
   const el = (id) => document.getElementById(id);
 
   // Statistics placeholders
-  el('stats').innerHTML = Array.from({ length: 7 }, () => `
+  el('stats').innerHTML = Array.from({ length: 8 }, () => `
     <div class="stat-skeleton" aria-hidden="true">
       <div class="skeleton skeleton-number"></div>
       <div class="skeleton skeleton-label"></div>
@@ -112,6 +112,11 @@ showDashboardSkeleton();
         label: 'Rejected',
         value: Number(statuses['Rejected'] || 0),
         href: 'reports.html?status=Rejected'
+      },
+      {
+        label: 'Closed',
+        value: Number(statuses['Closed'] || 0),
+        href: 'reports.html?status=Closed'
       }
     ];
 
