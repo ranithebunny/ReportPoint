@@ -22,7 +22,7 @@ if (file_exists(__DIR__ . '/../.env')) {
     }
 }
 
-function uploadEvidenceToSupabase(array $file): ?string
+function uploadEvidenceToSupabase(array $file): array
 {
     $supabaseUrl = rtrim((string)($_ENV['SUPABASE_URL'] ?? getenv('SUPABASE_URL') ?: ''), '/');
     $serviceKey  = (string)($_ENV['SUPABASE_SERVICE_ROLE_KEY'] ?? getenv('SUPABASE_SERVICE_ROLE_KEY') ?: '');
@@ -30,36 +30,52 @@ function uploadEvidenceToSupabase(array $file): ?string
 
     if ($supabaseUrl === '' || $serviceKey === '') {
         error_log('Supabase Storage env vars missing.');
-        return null;
+        return ['ok' => false, 'error' => 'Evidence storage is not configured.'];
     }
 
-    if (empty($file['name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-        if (!empty($file['error']) && $file['error'] !== UPLOAD_ERR_NO_FILE) {
-            error_log('Evidence upload error code: ' . $file['error']);
-        }
-        return null;
+    $uploadError = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($uploadError !== UPLOAD_ERR_OK) {
+        error_log('Evidence upload error code: ' . $uploadError);
+        $msg = ($uploadError === UPLOAD_ERR_INI_SIZE || $uploadError === UPLOAD_ERR_FORM_SIZE)
+            ? 'Evidence file exceeds the 10 MB limit.'
+            : 'Failed to upload evidence file.';
+        return ['ok' => false, 'error' => $msg];
     }
 
     $maxBytes = 10 * 1024 * 1024;
-    if (!empty($file['size']) && (int)$file['size'] > $maxBytes) {
-        error_log('Evidence file exceeded 10MB limit.');
-        return null;
+    if ((int)($file['size'] ?? 0) <= 0 || (int)$file['size'] > $maxBytes) {
+        return ['ok' => false, 'error' => 'Evidence file must be 10 MB or smaller.'];
     }
 
     $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
+    $allowedExts = ['jpg', 'jpeg', 'png', 'mp4'];
+    if (!in_array($ext, $allowedExts, true)) {
+        return ['ok' => false, 'error' => 'Only JPG, PNG, or MP4 files are allowed.'];
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $detectedMime = strtolower((string)$finfo->file($file['tmp_name']));
+    $allowedMimes = [
+        'jpg'  => ['image/jpeg'],
+        'jpeg' => ['image/jpeg'],
+        'png'  => ['image/png'],
+        'mp4'  => ['video/mp4'],
+    ];
+    if (!in_array($detectedMime, $allowedMimes[$ext], true)) {
+        return ['ok' => false, 'error' => 'File content does not match a valid JPG, PNG, or MP4 format.'];
+    }
+
     $cleanBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo((string)$file['name'], PATHINFO_FILENAME));
     $cleanBase = trim((string)$cleanBase, '_');
     if ($cleanBase === '') {
         $cleanBase = 'evidence';
     }
 
-    $objectPath = date('Y/m/') . time() . '_' . bin2hex(random_bytes(4)) . '_' . $cleanBase . ($ext ? '.' . $ext : '');
-    $mimeType = mime_content_type($file['tmp_name']) ?: ($file['type'] ?: 'application/octet-stream');
+    $objectPath = date('Y/m/') . time() . '_' . bin2hex(random_bytes(4)) . '_' . $cleanBase . '.' . $ext;
     $fileBytes = file_get_contents($file['tmp_name']);
-
     if ($fileBytes === false) {
         error_log('Could not read uploaded temp file.');
-        return null;
+        return ['ok' => false, 'error' => 'Could not read uploaded file.'];
     }
 
     $encodedObjectPath = str_replace('%2F', '/', rawurlencode($objectPath));
@@ -79,7 +95,7 @@ function uploadEvidenceToSupabase(array $file): ?string
         CURLOPT_HTTPHEADER     => [
             'Authorization: Bearer ' . $serviceKey,
             'apikey: ' . $serviceKey,
-            'Content-Type: ' . $mimeType,
+            'Content-Type: ' . $detectedMime,
             'x-upsert: true',
         ],
     ]);
@@ -91,15 +107,35 @@ function uploadEvidenceToSupabase(array $file): ?string
 
     if ($curlErr !== '' || $httpCode < 200 || $httpCode >= 300) {
         error_log("Supabase Storage upload failed (HTTP {$httpCode}): {$curlErr} {$responseBody}");
-        return null;
+        return ['ok' => false, 'error' => 'Failed to upload evidence to storage.'];
     }
 
-    return sprintf(
+    $publicUrl = sprintf(
         '%s/storage/v1/object/public/%s/%s',
         $supabaseUrl,
         rawurlencode($bucket),
         $encodedObjectPath
     );
+
+    return ['ok' => true, 'url' => $publicUrl];
+}
+
+function generateReportCode(PDO $pdo, int $maxAttempts = 15): string
+{
+    $year = date('Y');
+    $checkStmt = $pdo->prepare('SELECT 1 FROM reports WHERE report_code = :code LIMIT 1');
+
+    for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+        $suffix = str_pad((string)random_int(0, 999), 3, '0', STR_PAD_LEFT);
+        $code = sprintf('RP-%s-%s', $year, $suffix);
+
+        $checkStmt->execute([':code' => $code]);
+        if (!$checkStmt->fetchColumn()) {
+            return $code;
+        }
+    }
+
+    throw new RuntimeException('Unable to generate a unique report reference code.');
 }
 
 try {
@@ -147,41 +183,63 @@ try {
     $residentId = (int) $sessionResidentId;
 
     $evidencePath = null;
-    if (!empty($_FILES['evidence']['name'])) {
-        $evidencePath = uploadEvidenceToSupabase($_FILES['evidence']);
+    if (!empty($_FILES['evidence']['name']) || ((int)($_FILES['evidence']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE)) {
+        $uploadResult = uploadEvidenceToSupabase($_FILES['evidence']);
+        if (!$uploadResult['ok']) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => $uploadResult['error']]);
+            exit;
+        }
+        $evidencePath = $uploadResult['url'];
     }
 
     $pdo->beginTransaction();
 
-    $insertSql = "
-        INSERT INTO reports (
-            report_code, resident_id, category_id, title, location, description,
-            observed_at, priority_id, status_id, evidence_path
-        )
-        VALUES (
-            'TEMP', :resident_id, :category_id, :title, :location, :description,
-            :observed_at, :priority_id, :status_id, :evidence_path
-        )
-        RETURNING report_id
-    ";
-    $stmt = $pdo->prepare($insertSql);
-    $stmt->execute([
-        ':resident_id'   => $residentId,
-        ':category_id'   => $categoryId,
-        ':title'         => $title,
-        ':location'      => $location,
-        ':description'   => $description,
-        ':observed_at'   => $observedAt !== '' ? $observedAt : null,
-        ':priority_id'   => $priorityId,
-        ':status_id'     => $statusId,
-        ':evidence_path' => $evidencePath,
-    ]);
+    $reportCode = null;
+    $reportId = null;
 
-    $reportId = (int) $stmt->fetchColumn();
-    $reportCode = sprintf('RP-%s-%03d', date('Y'), $reportId);
+    for ($attempt = 0; $attempt < 5; $attempt++) {
+        $candidateCode = generateReportCode($pdo);
+        try {
+            $insertSql = "
+                INSERT INTO reports (
+                    report_code, resident_id, category_id, title, location, description,
+                    observed_at, priority_id, status_id, evidence_path
+                )
+                VALUES (
+                    :report_code, :resident_id, :category_id, :title, :location, :description,
+                    :observed_at, :priority_id, :status_id, :evidence_path
+                )
+                RETURNING report_id
+            ";
+            $stmt = $pdo->prepare($insertSql);
+            $stmt->execute([
+                ':report_code'   => $candidateCode,
+                ':resident_id'   => $residentId,
+                ':category_id'   => $categoryId,
+                ':title'         => $title,
+                ':location'      => $location,
+                ':description'   => $description,
+                ':observed_at'   => $observedAt !== '' ? $observedAt : null,
+                ':priority_id'   => $priorityId,
+                ':status_id'     => $statusId,
+                ':evidence_path' => $evidencePath,
+            ]);
 
-    $codeStmt = $pdo->prepare("UPDATE reports SET report_code = :code WHERE report_id = :id");
-    $codeStmt->execute([':code' => $reportCode, ':id' => $reportId]);
+            $reportId = (int) $stmt->fetchColumn();
+            $reportCode = $candidateCode;
+            break;
+        } catch (PDOException $dbErr) {
+            if (($dbErr->getCode() === '23505') && $attempt < 4) {
+                continue;
+            }
+            throw $dbErr;
+        }
+    }
+
+    if (!$reportId || !$reportCode) {
+        throw new RuntimeException('Could not allocate a unique report code.');
+    }
 
     $histStmt = $pdo->prepare("
         INSERT INTO report_history (report_id, event_type, actor_type, resident_id, new_value, message, is_resident_visible)

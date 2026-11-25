@@ -314,14 +314,80 @@ dialog::backdrop { background: rgba(10, 20, 14, .65); backdrop-filter: blur(2px)
 }
 
 /* Login validation */
-.field input[aria-invalid="true"] {
-  border-color: #dc3545;
+.login-wrap .req {
+  color: #e8a49c;
 }
 
-.error-text {
-  color: #dc3545;
+.login-wrap .form-error-summary {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(68, 36, 34, 0.78);
+  border: 1px solid rgba(240, 154, 144, 0.45);
+  border-left: 4px solid #f09a90;
+  color: #fce8e6;
+  font-size: 0.85rem;
+}
+
+.login-wrap .form-error-summary-title {
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+  color: #ffd6d1;
+}
+
+.login-wrap .form-error-summary ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.login-wrap .form-error-summary a {
+  color: #ffd6d1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login-wrap .field input[aria-invalid="true"] {
+  border-color: rgba(240, 154, 144, 0.72);
+  background-color: rgba(68, 36, 34, 0.25);
+}
+
+.login-wrap .field input[aria-invalid="true"]:focus {
+  border-color: rgba(240, 154, 144, 0.9);
+  box-shadow: 0 0 0 3px rgba(240, 154, 144, 0.18);
+}
+
+.login-wrap .error-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+  padding: 0.32rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(68, 36, 34, 0.72);
+  border: 1px solid rgba(240, 154, 144, 0.32);
+  color: #ffd6d1;
   font-size: 0.8rem;
-  margin-top: 5px;
+  line-height: 1.35;
+}
+
+.login-wrap .error-text:empty {
+  display: none;
+}
+
+.login-wrap .error-text::before {
+  content: "!";
+  display: inline-grid;
+  place-items: center;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(240, 154, 144, 0.22);
+  color: #ffd6d1;
+  flex-shrink: 0;
 }
 /* ---------- Dashboard Skeleton Loading ---------- */
 
@@ -996,7 +1062,79 @@ main.report-page {
   color: var(--danger);
   font-weight: 600;
 }
+/* Top error summary box */
+.form-error-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius-sm);
+  background: rgba(68, 36, 34, 0.78);
+  border: 1px solid rgba(240, 154, 144, 0.45);
+  border-left: 4px solid #f09a90;
+  color: #fce8e6;
+  font-size: 0.88rem;
+}
 
+.form-error-summary-title {
+  font-weight: 600;
+  margin: 0 0 0.45rem;
+  color: #ffd6d1;
+}
+
+.form-error-summary ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.form-error-summary a {
+  color: #ffd6d1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.form-error-summary a:hover {
+  color: #ffffff;
+}
+
+/* Inline field message with tinted background */
+.field-error-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  background: rgba(68, 36, 34, 0.72);
+  border: 1px solid rgba(240, 154, 144, 0.32);
+  color: #ffd6d1;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.field-error-msg::before {
+  content: "!";
+  display: inline-grid;
+  place-items: center;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(240, 154, 144, 0.22);
+  color: #ffd6d1;
+  flex-shrink: 0;
+}
+
+.form-card [aria-invalid="true"] {
+  border-color: rgba(240, 154, 144, 0.72);
+  background-color: rgba(68, 36, 34, 0.25);
+}
+
+.form-card [aria-invalid="true"]:focus {
+  border-color: rgba(240, 154, 144, 0.9);
+  box-shadow: 0 0 0 3px rgba(240, 154, 144, 0.18);
+}
 .optional {
   color: var(--text-faint);
   font-weight: 400;

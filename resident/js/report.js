@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const ALLOWED_EVIDENCE_EXTS = ['jpg', 'jpeg', 'png', 'mp4'];
   const ALLOWED_EVIDENCE_MIMES = ['image/jpeg', 'image/png', 'video/mp4'];
 
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function showFormState() {
     if (authGate) authGate.hidden = true;
     if (reportForm) reportForm.hidden = false;
@@ -81,16 +89,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!reportForm) return;
 
   const formAlert = document.createElement('div');
-  formAlert.className = 'alert-box danger';
+  formAlert.className = 'form-error-summary';
   formAlert.setAttribute('role', 'alert');
   formAlert.hidden = true;
-  formAlert.style.cssText = 'margin-bottom:1.25rem;padding:0.9rem 1.1rem;border-radius:8px;background:#fdecea;color:#b71c1c;border:1px solid #f5c6cb;font-weight:500;';
   reportForm.prepend(formAlert);
 
   function showFormError(msg) {
-    formAlert.textContent = msg;
+    formAlert.innerHTML = `<p class="form-error-summary-title" style="margin:0;">${escapeHtml(msg)}</p>`;
     formAlert.hidden = false;
     formAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function renderErrorSummary(errors) {
+    if (!errors.length) {
+      formAlert.hidden = true;
+      formAlert.innerHTML = '';
+      return;
+    }
+
+    const items = errors
+      .map(({ id, message }) => `<li><a href="#${escapeHtml(id)}">${escapeHtml(message)}</a></li>`)
+      .join('');
+
+    formAlert.innerHTML = `
+      <p class="form-error-summary-title">Please fix ${errors.length} ${errors.length === 1 ? 'field' : 'fields'} before submitting:</p>
+      <ul>${items}</ul>
+    `;
+    formAlert.hidden = false;
   }
 
   function setFieldError(field, message) {
@@ -102,15 +127,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!errorEl) {
         errorEl = document.createElement('small');
         errorEl.className = 'field-error-msg';
-        errorEl.style.cssText = 'display:block;color:#a94442;font-size:0.8rem;margin-top:0.35rem;font-weight:400;';
         container.appendChild(errorEl);
       }
       errorEl.textContent = message;
-      field.style.borderColor = '#a94442';
       field.setAttribute('aria-invalid', 'true');
     } else {
       if (errorEl) errorEl.remove();
-      field.style.borderColor = '';
       field.removeAttribute('aria-invalid');
     }
   }
@@ -139,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         setFieldError(evidenceInput, '');
       }
+      if (!formAlert.hidden) validateAllFields();
     });
   }
 
@@ -162,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function validateAllFields() {
     const fields = reportForm.querySelectorAll('input, select, textarea');
+    const errors = [];
     let firstInvalid = null;
 
     fields.forEach((field) => {
@@ -173,20 +197,25 @@ document.addEventListener('DOMContentLoaded', async () => {
           msg = formatMessages[field.id] || field.validationMessage || msg;
         }
         setFieldError(field, msg);
+        if (field.id) errors.push({ id: field.id, message: msg });
         if (!firstInvalid) firstInvalid = field;
       } else {
         setFieldError(field, '');
       }
     });
 
+    renderErrorSummary(errors);
     return firstInvalid;
   }
 
-  // Clear field error live as the user types or selects an option
+  // Clear field error live and refresh top summary as the user types or selects
   reportForm.querySelectorAll('input, select, textarea').forEach((field) => {
     const eventName = (field.tagName === 'SELECT' || field.type === 'checkbox' || field.type === 'radio') ? 'change' : 'input';
     field.addEventListener(eventName, () => {
-      if (field.checkValidity()) setFieldError(field, '');
+      if (field.checkValidity()) {
+        setFieldError(field, '');
+        if (!formAlert.hidden) validateAllFields();
+      }
     });
   });
 
@@ -195,14 +224,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const reviewSummary = document.getElementById('review-summary');
   const reviewEditBtn = document.getElementById('review-edit-btn');
   const reviewConfirmBtn = document.getElementById('review-confirm-btn');
-
-  function escapeHtml(str) {
-    return String(str ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
 
   function populateReviewModal() {
     if (!reviewSummary) return;
@@ -300,8 +321,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const firstInvalid = validateAllFields();
     if (firstInvalid) {
-      firstInvalid.focus();
-      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      formAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalid.focus({ preventScroll: true });
       return;
     }
 
@@ -312,7 +333,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         evidenceInput.value = '';
         setFieldError(evidenceInput, evidenceError);
       }
-      showFormError(evidenceError);
+      renderErrorSummary([{ id: 'evidence', message: evidenceError }]);
+      formAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
