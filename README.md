@@ -48,12 +48,12 @@ ReportPoint is a complete web-based resident reporting and management platform f
 
 ```text
 admin/       Administrator dashboard and management pages
+resident/    Resident-facing pages and scripts
 api/         PHP API endpoints
+database/    Database configuration and supporting files
 assets/      Shared media and static assets
 css/         Stylesheets
-database/    Database configuration and supporting files
 js/          Shared client-side JavaScript
-resident/    Resident-facing pages and scripts
 index.php    Application entry point
 Dockerfile   Container configuration
 ```
