@@ -54,7 +54,6 @@ css/         Stylesheets
 database/    Database configuration and supporting files
 js/          Shared client-side JavaScript
 resident/    Resident-facing pages and scripts
-uploads/     Uploaded report files
 index.php    Application entry point
 Dockerfile   Container configuration
 ```
