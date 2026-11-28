@@ -10,195 +10,196 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/theme.css">
   <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
-
 </head>
 <body>
-  <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-        <span class="admin-badge">ADMIN</span>
-      </span>
-    </a>
-
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
-
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="reports.html">Reports</a>
-      <a href="residents.html" data-perm="manage_residents">Residents</a>
-      <a href="admins.html" data-perm="manage_admins">Admins</a>
-
-      <span class="nav-user">
-        <span id="nav-admin-name"></span>
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
-  </div>
-</header>
-  <main id="main">
-    <a class="back-link" href="reports.html">← Back to reports</a>
-    <div id="report-skeleton" aria-hidden="true">
-  <div class="page-head">
-    <div style="flex:1;">
-      <div class="skeleton" style="width:120px; height:14px; margin-bottom:.6rem;"></div>
-      <div class="skeleton" style="width:320px; max-width:85%; height:34px; margin-bottom:.75rem;"></div>
-      <div class="row">
-        <div class="skeleton" style="width:110px; height:28px; border-radius:999px;"></div>
-        <div class="skeleton" style="width:130px; height:18px;"></div>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+      <div class="sidebar-top">
+        <a class="brand" href="dashboard.html" aria-label="ReportPoint Admin home">
+          <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+          <span class="brand-divider"></span>
+          <span class="brand-name">
+            ReportPoint
+            <span class="admin-badge">ADMIN</span>
+          </span>
+        </a>
+        <button type="button" class="sidebar-close" id="sidebar-close" aria-label="Close navigation">✕</button>
       </div>
-    </div>
-    <div class="skeleton" style="width:150px; height:42px; border-radius:8px;"></div>
-  </div>
 
-  <div class="card" style="margin-bottom:1.5rem;">
-    <div class="skeleton" style="width:100%; height:64px;"></div>
-  </div>
-
-  <div class="report-layout">
-    <div class="stack">
-      <div class="card">
-        <div class="skeleton skeleton-heading"></div>
-        <div class="skeleton skeleton-resident-line" style="width:90%;"></div>
-        <div class="skeleton skeleton-resident-line" style="width:80%;"></div>
-        <div class="skeleton skeleton-resident-line" style="width:70%;"></div>
-        <div class="skeleton skeleton-resident-line" style="width:85%;"></div>
-      </div>
-      <div class="card">
-        <div class="skeleton skeleton-heading"></div>
-        <div class="skeleton" style="width:100%; height:80px;"></div>
-      </div>
-    </div>
-
-    <div class="stack">
-      <div class="card">
-        <div class="skeleton skeleton-heading"></div>
-        <div class="skeleton" style="width:100%; height:40px; margin-bottom:1rem;"></div>
-        <div class="skeleton" style="width:100%; height:40px; margin-bottom:1rem;"></div>
-        <div class="skeleton" style="width:100%; height:36px;"></div>
-      </div>
-    </div>
-  </div>
-</div>
-    <div id="report-root" hidden>
-
-      <p class="eyebrow">Report details</p>
-      <h1 id="r-title"></h1>
-      <div class="row" style="margin-top:1.25rem;gap:1rem">
-        <span class="id-box" id="r-id"></span>
-        <span id="r-status"></span>
-        <span id="r-priority"></span>
-      </div>
-      <hr class="divider">
-      <div id="r-tracker" style="margin-bottom:2.5rem"></div>
-
-      <div class="report-layout">
-        <!-- LEFT: what was reported + history -->
-        <div class="stack">
-          <section class="card" aria-labelledby="sum-h">
-            <h2 id="sum-h">Summary</h2>
-            <dl class="kv" id="r-summary"></dl>
-          </section>
-          <section class="card" aria-labelledby="desc-h">
-            <h2 id="desc-h">Description</h2>
-            <p id="r-desc" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
-          </section>
-          <section class="card" aria-labelledby="hist-h">
-            <h2 id="hist-h">Activity history</h2>
-            <p class="muted small">Every change is kept permanently. Newest first.</p>
-            <div id="r-history"></div>
-          </section>
+      <nav class="sidebar-nav" aria-label="Primary admin sections">
+        <div class="nav-group">
+          <span class="nav-group-label">Overview</span>
+          <a class="nav-item" href="dashboard.html">
+            <span>Dashboard</span>
+          </a>
         </div>
 
-        <!-- RIGHT: things the admin can do -->
-        <div class="stack">
-          <section class="card" aria-labelledby="manage-h">
-            <h2 id="manage-h">Manage report</h2>
-            <div id="readonly-note" class="alert-box info" hidden>You have view-only access. Ask an administrator to give you the “Manage reports” permission.</div>
+        <div class="nav-group">
+          <span class="nav-group-label">Issue Management</span>
+          <a class="nav-item" href="reports.html" aria-current="page">
+            <span>Reports</span>
+          </a>
+        </div>
 
-            <div class="field">
-              <label for="status-select">Status</label>
-              <select id="status-select"></select>
-              <label for="status-msg" class="hint" style="font-weight:400">Optional note to resident (shown on their Track page)</label>
-              <input type="text" id="status-msg" maxlength="1000" placeholder="e.g. Our staff are reviewing the details of your report.">
-              <button class="btn btn-sm" id="status-btn" type="button" style="justify-self:start;margin-top:.4rem">Update status</button>
+        <div class="nav-group">
+          <span class="nav-group-label">Directory</span>
+          <a class="nav-item" href="residents.html" data-perm="manage_residents">
+            <span>Residents</span>
+          </a>
+          <a class="nav-item" href="admins.html" data-perm="manage_admins">
+            <span>Admins</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-admin-info">
+          <strong id="nav-admin-name"></strong>
+        </div>
+        <button type="button" class="btn btn-sm btn-block" id="logout-btn">Log out</button>
+      </div>
+    </aside>
+
+    <div class="admin-backdrop" id="admin-backdrop" hidden></div>
+
+    <div class="admin-main">
+      <header class="admin-mobile-bar">
+        <button type="button" class="nav-toggle" id="sidebar-open" aria-label="Open navigation" aria-expanded="false" aria-controls="admin-sidebar">☰</button>
+        <span class="brand-name">ReportPoint <span class="admin-badge">ADMIN</span></span>
+      </header>
+
+      <main id="main">
+        <div class="page-head">
+          <div>
+            <a class="small back-link" href="reports.html">← Back to reports</a>
+          </div>
+        </div>
+
+        <div id="report-skeleton" class="card" aria-hidden="true">
+          <div class="skeleton skeleton-title" style="width:45%;margin-bottom:.75rem"></div>
+          <div class="skeleton skeleton-meta" style="width:75%;margin-bottom:.5rem"></div>
+          <div class="skeleton skeleton-meta" style="width:60%"></div>
+        </div>
+
+        <div id="not-found" hidden>
+          <div class="card">
+            <div class="empty">
+              <strong>Report not found</strong>This report could not be found or may have been removed.
+            </div>
+          </div>
+        </div>
+
+        <div id="report-root" class="stack" hidden>
+          <section class="card">
+            <div class="card-title">
+              <div>
+                <p class="eyebrow" style="margin-bottom:.25rem">Report <span class="mono" id="r-id"></span></p>
+                <h1 id="r-title" style="margin:0"></h1>
+              </div>
+              <div class="row" style="gap:.5rem;align-items:center">
+                <span id="r-status"></span>
+                <span class="small muted" id="r-priority"></span>
+              </div>
             </div>
 
-            <div class="field">
-              <label for="priority-select">Priority</label>
-              <div class="row"><select id="priority-select" style="flex:1"></select><button class="btn btn-sm" id="priority-btn" type="button">Save</button></div>
-              <span class="hint">Changing priority never changes the status.</span>
-            </div>
+            <div id="r-tracker" style="margin:1rem 0"></div>
 
-            <div class="field">
-              <span class="label" id="tags-label">Tags</span>
-              <div class="tag-list" id="tag-list" aria-labelledby="tags-label"></div>
-              <div class="tag-add" id="tag-add" aria-label="Add a tag"></div>
-            </div>
+            <p id="r-desc" style="white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:1rem"></p>
 
-            <hr class="divider" style="margin:1rem 0">
-            <div class="stack" style="gap:.6rem">
-              <button class="btn btn-warn btn-block" id="open-info" type="button">Request more information</button>
-              <button class="btn btn-primary btn-block" id="open-resolve" type="button">Mark as resolved</button>
-              <button class="btn btn-danger btn-block" id="open-reject" type="button">Reject report</button>
-            </div>
+            <dl class="kv" id="r-summary" style="grid-template-columns:140px 1fr"></dl>
           </section>
 
-          <!-- Two clearly different channels -->
-          <section class="channel public" aria-labelledby="pub-h">
-            <div class="channel-head">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-              <span id="pub-h">Resident-visible comments<small>The resident WILL read these on their Track and View Details pages.</small></span>
-            </div>
-            <div class="channel-body">
-              <ul class="thread" id="comment-list" aria-live="polite"></ul>
+          <div class="grid grid-2">
+            <section class="card">
+              <h2 id="manage-h">Manage report</h2>
+              <p class="small muted" id="readonly-note" hidden>You have view-only access to reports.</p>
+
+              <div class="field">
+                <label for="status-select">Status</label>
+                <div class="row" style="gap:.5rem">
+                  <select id="status-select"></select>
+                  <button type="button" class="btn btn-primary btn-sm" id="status-btn">Update</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="status-msg">Optional message to resident</label>
+                <input type="text" id="status-msg" placeholder="Shown on resident's tracking view">
+              </div>
+
+              <div class="field">
+                <label for="priority-select">Priority</label>
+                <div class="row" style="gap:.5rem">
+                  <select id="priority-select"></select>
+                  <button type="button" class="btn btn-sm" id="priority-btn">Set priority</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Tags</label>
+                <div id="tag-list" class="row" style="gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem"></div>
+                <div id="tag-add" class="row" style="gap:.4rem;flex-wrap:wrap"></div>
+              </div>
+
+              <div class="actions" style="margin-top:1rem">
+                <button type="button" class="btn btn-warn btn-sm" id="open-info">Request info</button>
+                <button type="button" class="btn btn-primary btn-sm" id="open-resolve">Resolve</button>
+                <button type="button" class="btn btn-danger btn-sm" id="open-reject">Reject</button>
+              </div>
+            </section>
+
+            <section class="card">
+              <h2>History</h2>
+              <div id="r-history"></div>
+            </section>
+          </div>
+
+          <div class="grid grid-2">
+            <section class="card">
+              <h2>Resident comments</h2>
+              <ul id="comment-list" class="thread" style="list-style:none;padding:0;margin:0 0 1rem"></ul>
+
+              <div class="quick-replies row" style="gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem">
+                <button type="button" class="btn btn-sm" data-text="Our maintenance team has been assigned to look into this.">Maintenance assigned</button>
+                <button type="button" class="btn btn-sm" data-text="We are currently inspecting the reported area.">Inspecting area</button>
+              </div>
+
               <form id="comment-form" novalidate>
-                <div class="quick-replies" aria-label="Quick replies">
-                  <button type="button" data-text="Your report has been forwarded to the appropriate department.">Forwarded</button>
-                  <button type="button" data-text="An inspection has been scheduled.">Inspection scheduled</button>
-                  <button type="button" data-text="The reported issue has been addressed.">Addressed</button>
+                <div class="field">
+                  <label for="comment-text">Send comment to resident</label>
+                  <textarea id="comment-text" rows="3" maxlength="500"></textarea>
+                  <div class="row between">
+                    <span class="error-text" id="comment-text-error"></span>
+                    <span class="char-count" id="comment-text-count"></span>
+                  </div>
                 </div>
-                <div class="field" style="margin-bottom:.6rem">
-                  <label for="comment-text">Comment to resident</label>
-                  <textarea id="comment-text" rows="3" placeholder="Write something the resident should read…"></textarea>
-                  <div class="row between"><span class="error-text" id="comment-text-error"></span><span class="char-count" id="comment-text-count"></span></div>
-                </div>
-                <button class="btn btn-primary btn-sm" type="submit">Add comment</button>
+                <button type="submit" class="btn btn-primary btn-sm">Send comment</button>
               </form>
-            </div>
-          </section>
+            </section>
 
-          <section class="channel private" aria-labelledby="priv-h">
-            <div class="channel-head">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
-              <span id="priv-h">Internal notes — admins only<small>Residents can NEVER see these.</small></span>
-            </div>
-            <div class="channel-body">
-              <ul class="thread" id="note-list"></ul>
+            <section class="card">
+              <h2>Internal notes</h2>
+              <ul id="note-list" class="thread" style="list-style:none;padding:0;margin:0 0 1rem"></ul>
+
               <form id="note-form" novalidate>
-                <div class="field" style="margin-bottom:.6rem">
-                  <label for="note-text">Private note</label>
-                  <textarea id="note-text" rows="3" placeholder="e.g. Coordinate with the maintenance team."></textarea>
-                  <div class="row between"><span class="error-text" id="note-text-error"></span><span class="char-count" id="note-text-count"></span></div>
+                <div class="field">
+                  <label for="note-text">Add internal note</label>
+                  <textarea id="note-text" rows="3" maxlength="500"></textarea>
+                  <div class="row between">
+                    <span class="error-text" id="note-text-error"></span>
+                    <span class="char-count" id="note-text-count"></span>
+                  </div>
                 </div>
-                <button class="btn btn-warn btn-sm" type="submit">Add internal note</button>
+                <button type="submit" class="btn btn-sm">Save note</button>
               </form>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
-      </div>
-    </div>
+      </main>
 
-    <div id="not-found" class="card" hidden>
-      <div class="empty"><strong>Report not found</strong>The report may have been removed, or the link is incorrect.</div>
-      <p style="text-align:center"><a class="btn" href="reports.html">Back to reports</a></p>
+      <div id="app-footer"></div>
     </div>
-  </main>
-  <div id="app-footer"></div>
+  </div>
 
   <!-- Request more information -->
   <dialog id="dlg-info" aria-labelledby="dlg-info-h">
@@ -253,6 +254,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/admin-sidebar.js"></script>
   <script src="js/page-report.js"></script>
 </body>
 </html>

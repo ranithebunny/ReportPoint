@@ -10,77 +10,116 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/theme.css">
   <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
-
 </head>
 <body>
-  
-  <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-        <span class="admin-badge">ADMIN</span>
-      </span>
-    </a>
-
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
-
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="reports.html">Reports</a>
-      <a href="residents.html" data-perm="manage_residents">Residents</a>
-      <a href="admins.html" data-perm="manage_admins">Admins</a>
-
-      <span class="nav-user">
-        <span id="nav-admin-name"></span>
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
-  </div>
-</header>
-
-  <main id="main">
-    <div class="page-head">
-      <div>
-        <p class="eyebrow">Overview</p>
-        <h1>Good day, <span id="who"></span></h1>
-        <p>Here is where every submitted report stands right now.</p>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+      <div class="sidebar-top">
+        <a class="brand" href="dashboard.html" aria-label="ReportPoint Admin home">
+          <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+          <span class="brand-divider"></span>
+          <span class="brand-name">
+            ReportPoint
+            <span class="admin-badge">ADMIN</span>
+          </span>
+        </a>
+        <button type="button" class="sidebar-close" id="sidebar-close" aria-label="Close navigation">✕</button>
       </div>
-      <a class="btn btn-primary" href="reports.html">View all reports</a>
+
+      <nav class="sidebar-nav" aria-label="Primary admin sections">
+        <div class="nav-group">
+          <span class="nav-group-label">Overview</span>
+          <a class="nav-item" href="dashboard.html" aria-current="page">
+            <span>Dashboard</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-label">Issue Management</span>
+          <a class="nav-item" href="reports.html">
+            <span>Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-label">Directory</span>
+          <a class="nav-item" href="residents.html" data-perm="manage_residents">
+            <span>Residents</span>
+          </a>
+          <a class="nav-item" href="admins.html" data-perm="manage_admins">
+            <span>Admins</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-admin-info">
+          <strong id="nav-admin-name"></strong>
+        </div>
+        <button type="button" class="btn btn-sm btn-block" id="logout-btn">Log out</button>
+      </div>
+    </aside>
+
+    <div class="admin-backdrop" id="admin-backdrop" hidden></div>
+
+    <div class="admin-main">
+      <header class="admin-mobile-bar">
+        <button type="button" class="nav-toggle" id="sidebar-open" aria-label="Open navigation" aria-expanded="false" aria-controls="admin-sidebar">☰</button>
+        <span class="brand-name">ReportPoint <span class="admin-badge">ADMIN</span></span>
+      </header>
+
+      <main id="main">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h1>Welcome back, <span id="who">Admin.</span></h1>
+            <p>Summary of resident reports and recent activity.</p>
+          </div>
+          <a class="btn btn-primary btn-sm" href="reports.html">View all reports</a>
+        </div>
+
+        <div class="stack">
+          <section class="grid grid-stats" id="stats" aria-label="Report statistics"></section>
+
+          <div class="grid grid-2">
+            <section class="card">
+              <div class="card-title">
+                <h2>Needs attention</h2>
+                <a class="small" href="reports.html?status=Received">View new</a>
+              </div>
+              <div id="attention"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-title">
+                <h2>Recent activity</h2>
+                <a class="small" href="reports.html">All reports</a>
+              </div>
+              <div id="recent"></div>
+            </section>
+          </div>
+
+          <div class="grid grid-2">
+            <section class="card">
+              <h2>By category</h2>
+              <div id="categories"></div>
+            </section>
+
+            <section class="card">
+              <h2>By priority</h2>
+              <div id="priorities"></div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
     </div>
-
-    <section aria-labelledby="stats-h" class="stack">
-      <h2 class="sr-only" id="stats-h">Report counts by status</h2>
-      <div class="grid grid-stats" id="stats"></div>
-    </section>
-
-    <div class="grid grid-2" style="margin-top:1.5rem">
-      <section class="card" aria-labelledby="attn-h">
-        <h2 id="attn-h">Needs attention</h2>
-        <p class="muted small">Unreviewed reports and open High-priority reports, oldest first.</p>
-        <div id="attention"></div>
-      </section>
-      <section class="card" aria-labelledby="cat-h">
-        <h2 id="cat-h">Reports by category</h2>
-        <div id="categories"></div>
-        <hr class="divider">
-        <h3 style="margin-bottom:.75rem">Open by priority</h3>
-        <div id="priorities"></div>
-      </section>
-    </div>
-
-    <section class="card" style="margin-top:1.5rem" aria-labelledby="recent-h">
-      <h2 id="recent-h">Recent activity</h2>
-      <div id="recent"></div>
-    </section>
-  </main>
-  <div id="app-footer"></div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/admin-sidebar.js"></script>
   <script src="js/page-dashboard.js"></script>
 </body>
 </html>

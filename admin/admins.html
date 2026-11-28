@@ -10,54 +10,94 @@
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/theme.css">
   <link rel="icon" type="image/png" href="../assets/favicon-rp.jpeg">
-
 </head>
 <body>
-  <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="dashboard.html" aria-label="ReportPoint admin home">
-      <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
-      <span class="brand-divider"></span>
-      <span class="brand-name">
-        ReportPoint
-        <span class="admin-badge">ADMIN</span>
-      </span>
-    </a>
-
-    <button class="nav-toggle" aria-label="Toggle menu"
-      aria-expanded="false" aria-controls="nav">☰</button>
-
-    <nav class="nav" id="nav" aria-label="Admin">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="reports.html">Reports</a>
-      <a href="residents.html" data-perm="manage_residents">Residents</a>
-      <a href="admins.html" data-perm="manage_admins">Admins</a>
-
-      <span class="nav-user">
-        <span id="nav-admin-name"></span>
-        <button class="nav-link" id="logout-btn">Log out</button>
-      </span>
-    </nav>
-  </div>
-</header>
-  <main id="main">
-    <div class="page-head">
-      <div>
-        <p class="eyebrow">Administrator accounts</p>
-        <h1>Admins &amp; access</h1>
-        <p>Create administrators and choose exactly what each one is allowed to do.</p>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+      <div class="sidebar-top">
+        <a class="brand" href="dashboard.html" aria-label="ReportPoint Admin home">
+          <img class="brand-mark" src="../assets/logo-placeholder.png" alt="College Point">
+          <span class="brand-divider"></span>
+          <span class="brand-name">
+            ReportPoint
+            <span class="admin-badge">ADMIN</span>
+          </span>
+        </a>
+        <button type="button" class="sidebar-close" id="sidebar-close" aria-label="Close navigation">✕</button>
       </div>
-      <button class="btn btn-primary" id="add-btn" type="button">+ Add administrator</button>
-    </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th scope="col">Name</th><th scope="col">Username</th><th scope="col">Access</th><th scope="col">Status</th><th scope="col">Created</th><th scope="col">Actions</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
+      <nav class="sidebar-nav" aria-label="Primary admin sections">
+        <div class="nav-group">
+          <span class="nav-group-label">Overview</span>
+          <a class="nav-item" href="dashboard.html">
+            <span>Dashboard</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-label">Issue Management</span>
+          <a class="nav-item" href="reports.html">
+            <span>Reports</span>
+          </a>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-label">Directory</span>
+          <a class="nav-item" href="residents.html" data-perm="manage_residents">
+            <span>Residents</span>
+          </a>
+          <a class="nav-item" href="admins.html" data-perm="manage_admins" aria-current="page">
+            <span>Admins</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-admin-info">
+          <strong id="nav-admin-name"></strong>
+        </div>
+        <button type="button" class="btn btn-sm btn-block" id="logout-btn">Log out</button>
+      </div>
+    </aside>
+
+    <div class="admin-backdrop" id="admin-backdrop" hidden></div>
+
+    <div class="admin-main">
+      <header class="admin-mobile-bar">
+        <button type="button" class="nav-toggle" id="sidebar-open" aria-label="Open navigation" aria-expanded="false" aria-controls="admin-sidebar">☰</button>
+        <span class="brand-name">ReportPoint <span class="admin-badge">ADMIN</span></span>
+      </header>
+
+      <main id="main">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">Directory</p>
+            <h1>Administrators</h1>
+            <p>Manage admin accounts, role permissions, password resets, and account status.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="add-btn">Add administrator</button>
+        </div>
+
+        <div class="table-wrap" id="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Username</th>
+                <th scope="col">Access</th>
+                <th scope="col">Status</th>
+                <th scope="col">Created</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
     </div>
-  </main>
-  <div id="app-footer"></div>
+  </div>
 
   <dialog id="dlg-admin" aria-labelledby="dlg-admin-h">
     <form id="admin-form" novalidate>
@@ -77,6 +117,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/admin-sidebar.js"></script>
   <script src="js/page-admins.js"></script>
 </body>
 </html>

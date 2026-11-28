@@ -42,13 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 try {
-   
     $sql = "
         SELECT
             r.report_id,
             r.report_code,
             r.title,
             r.location,
+            r.description,
             COALESCE(res.full_name, 'Unknown') AS \"residentName\",
             COALESCE(res.unit, '') AS unit,
             COALESCE(c.name, 'Uncategorized') AS category,
@@ -63,7 +63,6 @@ try {
         LEFT JOIN statuses s ON s.status_id = r.status_id
         ORDER BY r.created_at DESC
     ";
-
 
     $reports = $pdo->query($sql)->fetchAll();
 
